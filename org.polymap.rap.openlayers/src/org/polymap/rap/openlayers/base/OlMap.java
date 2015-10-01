@@ -100,6 +100,9 @@ public class OlMap
         widget.setLayoutData( layoutData );
     }
 
+    public Composite getControl() {
+        return widget;
+    }
 
     /**
      * Adds the given layer to the top of this map.
