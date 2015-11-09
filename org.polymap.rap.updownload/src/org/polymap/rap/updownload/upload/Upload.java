@@ -172,16 +172,25 @@ public class Upload
     
         @Override
         public int read() throws IOException {
-            throw new RuntimeException( "not implemented." );
+            final int result = super.read();
+            
+            handleProgress( result );
+            return result;
         }
-    
-    
+
+
         @Override
         public int read( byte[] b, int off, int len ) throws IOException {
             final int result = super.read( b, off, len );
 
-//            try { Thread.sleep( 1000 ); } catch (InterruptedException e) {}
-            
+            // try { Thread.sleep( 1000 ); } catch (InterruptedException e) {}
+
+            handleProgress( result );
+            return result;
+        }
+
+
+        private void handleProgress( final int result ) {
             if (progress != null && !progress.isDisposed()) {
                 display.asyncExec( new Runnable() {
                     public void run() {
@@ -208,8 +217,6 @@ public class Upload
                     }
                 });
             }
-            return result;
         }
     }
-
 }
