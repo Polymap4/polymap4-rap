@@ -90,7 +90,7 @@ public class OlMap
     public OlMap( Composite parent, int style, View view ) {
         super( "ol.Map" );
         this.view.set( view );
-        this.interactions.set( new ArrayList<Interaction>() );
+//        this.interactions.set( new ArrayList<Interaction>() );
         view.setMap( this );
 
         widget = new Composite( parent, style );
@@ -116,18 +116,18 @@ public class OlMap
         return widget;
     }
     
-    
-    @SuppressWarnings("unchecked")
-    public <T extends Interaction> T getInteraction( Class<T> clazz ) {
-        if(interactions.get() != null) {
-            for(Interaction interaction : interactions.get()) {
-                if(clazz.isAssignableFrom( interaction.getClass() )) {
-                    return (T) interaction;
-                }
-            }
-        }
-        return null;
-    }    
+//    
+//    @SuppressWarnings("unchecked")
+//    public <T extends Interaction> T getInteraction( Class<T> clazz ) {
+//        if(interactions.get() != null) {
+//            for(Interaction interaction : interactions.get()) {
+//                if(clazz.isAssignableFrom( interaction.getClass() )) {
+//                    return (T) interaction;
+//                }
+//            }
+//        }
+//        return null;
+//    }    
 
     
     /**
