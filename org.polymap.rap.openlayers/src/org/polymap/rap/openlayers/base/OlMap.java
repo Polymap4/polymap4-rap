@@ -198,19 +198,20 @@ public class OlMap
     // }
 
     /**
-     * The event contains the new center, resolution and rotation
+     * The event contains the new center, resolution and rotation.
      * 
      * @param event
-     * @param listener
+     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
      */
     public void addEventListener( EVENT event, OlEventListener listener ) {
         PayLoad payload = null;
-        if(event == EVENT.click) {
+        if (event == EVENT.click) {
             payload = new PayLoad();
             payload.add( "feature", "{}" );
             payload.add( "feature.pixel", "theEvent.pixel" );
             payload.add( "feature.coordinate", "that.objs['" + getObjRef() + "'].getCoordinateFromPixel(theEvent.pixel)" );
-        } else if(event == EVENT.boxstart || event == EVENT.boxend) {
+        }
+        else if (event == EVENT.boxstart || event == EVENT.boxend) {
             payload = new PayLoad();
             payload.add( "feature", "{}" );
             payload.add( "feature.pixel", "that.objs['" + getObjRef() + "'].getPixelFromCoordinate(theEvent.coordinate)" );

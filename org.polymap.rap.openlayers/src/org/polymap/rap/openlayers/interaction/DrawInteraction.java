@@ -19,7 +19,6 @@ import org.polymap.rap.openlayers.base.Jsonable;
 import org.polymap.rap.openlayers.base.OlEventListener;
 import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
-import org.polymap.rap.openlayers.geom.GeometryType;
 import org.polymap.rap.openlayers.source.VectorSource;
 
 /**
@@ -75,6 +74,11 @@ public class DrawInteraction
     }
 
 
+    /**
+     * 
+     * @param event
+     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+     */
     public void addEventListener( Event event, OlEventListener listener ) {
         PayLoad payload = new PayLoad();
         if (event == Event.drawend) {

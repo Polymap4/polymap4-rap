@@ -14,15 +14,11 @@
  */
 package org.polymap.rap.openlayers.base;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.rap.json.JsonObject;
 import org.json.JSONArray;
 import org.polymap.core.runtime.config.Config;
 import org.polymap.core.runtime.config.ConfigurationFactory;
+import org.polymap.core.runtime.event.EventManager;
+
 import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
 import org.polymap.rap.openlayers.base.OlPropertyConcern.Unquoted;
 import org.polymap.rap.openlayers.util.Stringer;
@@ -37,11 +33,13 @@ import org.polymap.rap.openlayers.util.Stringer;
  */
 public abstract class OlObject {
 
-    public static final String UNKNOWN_CLASSNAME = "_unknown_";
+    public static final String  UNKNOWN_CLASSNAME = "_unknown_";
 
-    protected String           jsClassname       = UNKNOWN_CLASSNAME;
+    protected String            jsClassname       = UNKNOWN_CLASSNAME;
 
-    protected String           objRef;
+    protected String            objRef;
+
+    private OlSessionHandler    osh;
 
 
     protected OlObject( String jsClassname ) {
@@ -66,11 +64,9 @@ public abstract class OlObject {
     }
 
 
-    protected void create( String jsClassname, String options ) {
+    protected void create( @SuppressWarnings("hiding") String jsClassname, String options ) {
         create( new Stringer( "new ", jsClassname, "(", options, ")" ).toString() );
     }
-
-    private OlSessionHandler osh;
 
 
     private OlSessionHandler osh() {
@@ -164,8 +160,6 @@ public abstract class OlObject {
     /**
      * return the current reference number without any JS around. If the objRef is
      * null, the OlObject starts its creation lify cycle.
-     * 
-     * @return
      */
     public String getObjRef() {
         lazyCreate();
@@ -190,34 +184,29 @@ public abstract class OlObject {
         call( getJSObjRef() + "=null;" );
     }
 
-    private Map<String,Set<OlEventListener>> eventListeners = new HashMap<String,Set<OlEventListener>>();
-
-
-    protected void addEventListener( final String event, OlEventListener listener,
-            PayLoad payload ) {
-        Set<OlEventListener> listeners = eventListeners.get( event );
-        if (listeners == null) {
-            listeners = new HashSet<OlEventListener>();
-            eventListeners.put( event, listeners );
-        }
-        listeners.add( listener );
+    
+    /**
+     * 
+     *
+     * @param event The {@link OlEvent#name()} of the event.
+     * @param listener <em>Weakly</em> referenced by {@link EventManager}.
+     * @param payload
+     */
+    protected void addEventListener( final String event, OlEventListener listener, PayLoad payload ) {
+        EventManager.instance().subscribe( listener, ev ->
+                ev instanceof OlEvent &&  ((OlEvent)ev).name().equals( event ) );
 
         osh().registerEventListener( this, event, listener, payload );
     }
 
 
     protected void removeEventListener( final String event, OlEventListener listener ) {
-        Set<OlEventListener> listeners = eventListeners.get( event );
-        if (listeners != null) {
-            listeners.remove( listener );
-        }
+        EventManager.instance().unsubscribe( listener );
         osh().unregisterEventListener( this, event, listener );
     }
 
 
     void handleEvent( OlEvent event ) {
-        for (OlEventListener l : eventListeners.get( event.name() )) {
-            l.handleEvent( event );
-        }
+        EventManager.instance().publish( event );
     }
 }

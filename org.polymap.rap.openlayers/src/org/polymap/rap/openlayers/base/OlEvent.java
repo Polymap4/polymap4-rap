@@ -14,6 +14,8 @@
  */
 package org.polymap.rap.openlayers.base;
 
+import java.util.EventObject;
+
 import org.eclipse.rap.json.JsonObject;
 
 /**
@@ -21,9 +23,8 @@ import org.eclipse.rap.json.JsonObject;
  * 
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
-public class OlEvent {
-
-    private final OlObject   src;
+public class OlEvent
+        extends EventObject {
 
     private final String     name;
 
@@ -31,15 +32,15 @@ public class OlEvent {
 
 
     public OlEvent( OlObject src, String name, JsonObject properties ) {
-        this.src = src;
+        super( src );
         this.name = name;
         this.properties = properties;
 
     }
 
-
-    public OlObject src() {
-        return src;
+    @Override
+    public OlObject getSource() {
+        return (OlObject)super.getSource();
     }
 
 
