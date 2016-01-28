@@ -168,13 +168,13 @@ public class OlMap
     }
 
 
-    public void addInteraction( DrawInteraction di ) {
-        call( "addInteraction", di );
+    public void addInteraction( Interaction interaction ) {
+        call( "addInteraction", interaction );
     }
 
 
-    public void removeInteraction( DrawInteraction di ) {
-        call( "removeInteraction", di );
+    public void removeInteraction( Interaction interaction ) {
+        call( "removeInteraction", interaction );
     }
 
 
