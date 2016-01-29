@@ -22,6 +22,8 @@ package org.polymap.rap.openlayers.base;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Display;
+
 import org.polymap.core.runtime.event.EventHandler;
 
 /**
@@ -31,6 +33,11 @@ import org.polymap.core.runtime.event.EventHandler;
  */
 public interface OlEventListener {
 
+    /**
+     * Gets called inside the {@link Display} thread.
+     *
+     * @param event
+     */
     @EventHandler( display=true )
     void handleEvent( OlEvent event );
 

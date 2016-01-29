@@ -58,17 +58,21 @@ public class OlMap
 
     private final static Log log = LogFactory.getLog( OlMap.class );
 
+    public enum Event {
+        layerGroup( "change:layerGroup" ),
+        size( "change:size" ),
+        target( "change:target" ),
+        view( "change:view" ),
+        click( "click" ),
+        boxstart( "boxstart" ),
+        boxend( "boxend" );
 
-    public enum EVENT {
-        layerGroup("change:layerGroup"), size("change:size"), target("change:target"), view("change:view"),
-        click("click"), boxstart("boxstart"), boxend("boxend");
-        
         private String eventName;
-        
-        EVENT(String eventName) {
+
+        Event( String eventName ) {
             this.eventName = eventName;
         }
-        
+
         public String getEventName() {
             return eventName;
         }
@@ -203,15 +207,15 @@ public class OlMap
      * @param event
      * @param listener <b>Weakly</b> referenced by {@link EventManager}.
      */
-    public void addEventListener( EVENT event, OlEventListener listener ) {
+    public void addEventListener( Event event, OlEventListener listener ) {
         PayLoad payload = null;
-        if (event == EVENT.click) {
+        if (event == Event.click) {
             payload = new PayLoad();
             payload.add( "feature", "{}" );
             payload.add( "feature.pixel", "theEvent.pixel" );
             payload.add( "feature.coordinate", "that.objs['" + getObjRef() + "'].getCoordinateFromPixel(theEvent.pixel)" );
         }
-        else if (event == EVENT.boxstart || event == EVENT.boxend) {
+        else if (event == Event.boxstart || event == Event.boxend) {
             payload = new PayLoad();
             payload.add( "feature", "{}" );
             payload.add( "feature.pixel", "that.objs['" + getObjRef() + "'].getPixelFromCoordinate(theEvent.coordinate)" );
@@ -220,7 +224,7 @@ public class OlMap
         addEventListener( event.getEventName(), listener, payload );
     }
 
-    public void removeEventListener( EVENT event, OlEventListener listener ) {
+    public void removeEventListener( Event event, OlEventListener listener ) {
         removeEventListener( event.getEventName(), listener );
     }
 

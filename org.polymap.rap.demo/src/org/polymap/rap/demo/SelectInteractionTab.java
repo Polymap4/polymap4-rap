@@ -134,7 +134,7 @@ public class SelectInteractionTab
         payload.add( "feature.coordinate", map.getJSObjRef().replace( "this.objs", "that.objs" )
                 + ".getCoordinateFromPixel(theEvent.pixel)" );
         
-        map.addEventListener( OlMap.EVENT.click, event -> {
+        map.addEventListener( OlMap.Event.click, event -> {
             JsonObject json = event.properties();
             JsonObject feature = (JsonObject)json.get( "feature" );
             JsonArray coordinate = (JsonArray)feature.get( "coordinate" );
