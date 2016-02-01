@@ -12,7 +12,10 @@
  */
 package org.polymap.rap.openlayers.source;
 
+import org.polymap.rap.openlayers.base.OlEventListener;
 import org.polymap.rap.openlayers.base.OlObject;
+import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
+import org.polymap.rap.openlayers.layer.ILayerEvent;
 
 /**
  * Abstract base class; normally only used for creating subclasses and not
@@ -28,4 +31,8 @@ public abstract class Source
         super( jsClassname );
     }
 
+    
+    public <T extends ILayerEvent> void addEventListener( T event, OlEventListener listener ) {
+        super.addEventListener( event.getEventName(), listener, new PayLoad() );
+    }
 }

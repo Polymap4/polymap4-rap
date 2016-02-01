@@ -31,6 +31,20 @@ import org.polymap.rap.openlayers.source.TileSource;
  */
 public class TileLayer
         extends Layer<TileSource> {
+    
+    public enum TileEvent implements ILayerEvent {
+        LOAD_START("tileloadstart"), LOAD_END("tileloadend"), LOAD_ERROR("tileloaderror");
+        
+        private final String eventName;
+        
+        TileEvent(String eventName) {
+            this.eventName = eventName;
+        }
+        
+        public String getEventName() {
+            return eventName;
+        }
+    }    
 
     /**
      * Preload. Load low-resolution tiles up to preload levels. By default preload is
@@ -42,5 +56,5 @@ public class TileLayer
 
     public TileLayer() {
         super( "ol.layer.Tile" );
-    }
+    }   
 }

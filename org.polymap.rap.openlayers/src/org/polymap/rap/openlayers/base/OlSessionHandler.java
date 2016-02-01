@@ -114,15 +114,18 @@ public class OlSessionHandler {
         // if not set as resource before, add this default css
         OlPlugin.registerResource( "resources/css/bootstrap-3.3.4.min.css", "css/bootstrap.css" );
         OlPlugin.registerResource( "resources/css/ol-3.7.0.css", "css/ol.css" );
+        OlPlugin.registerResource( "resources/css/ol3-loadingpanel.css", "css/ol.css" );
 
 //        OlPlugin.registerResource( "resources/js/ol-3.7.0.debug.js", "js/ol.js" );
         OlPlugin.registerResource( "resources/js/ol-3.7.0.js", "js/ol.js" );
         OlPlugin.registerResource( "org/polymap/rap/openlayers/js/OlWrapper.js",
                 "js/OlWrapper.js" );
+        OlPlugin.registerResource( "resources/js/ol3-loadingpanel.js", "js/ol3-loadingpanel.js" );
 
         JavaScriptLoader jsLoader = RWT.getClient().getService( JavaScriptLoader.class );
         jsLoader.require( OlPlugin.resourceLocation( "js/ol.js" ) );
         jsLoader.require( OlPlugin.resourceLocation( "js/OlWrapper.js" ) );
+        jsLoader.require( OlPlugin.resourceLocation( "js/ol3-loadingpanel.js" ) );
     }
 
 

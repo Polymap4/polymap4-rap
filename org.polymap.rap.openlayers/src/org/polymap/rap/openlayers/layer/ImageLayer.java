@@ -12,7 +12,6 @@
  */
 package org.polymap.rap.openlayers.layer;
 
-import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.rap.openlayers.source.ImageSource;
 
 /**
@@ -26,6 +25,20 @@ import org.polymap.rap.openlayers.source.ImageSource;
 public class ImageLayer
         extends Layer<ImageSource> {
 
+    public enum ImageEvent implements ILayerEvent {
+        LOAD_START("imageloadstart"), LOAD_END("imageloadend"), LOAD_ERROR("imageloaderror");
+        
+        private final String eventName;
+        
+        ImageEvent(String eventName) {
+            this.eventName = eventName;
+        }
+        
+        public String getEventName() {
+            return eventName;
+        }
+    }
+    
     /**
      * Constructs a new instance.
      */
