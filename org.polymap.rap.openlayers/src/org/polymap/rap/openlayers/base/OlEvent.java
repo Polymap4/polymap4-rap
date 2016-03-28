@@ -15,7 +15,7 @@ package org.polymap.rap.openlayers.base;
 
 import java.util.EventObject;
 
-import org.eclipse.rap.json.JsonObject;
+import org.json.JSONObject;
 
 /**
  * The base event used by the listeners.
@@ -27,10 +27,10 @@ public class OlEvent
 
     private final String     name;
 
-    private final JsonObject properties;
+    private final JSONObject properties;
 
 
-    public OlEvent( OlObject src, String name, JsonObject properties ) {
+    public OlEvent( OlObject src, String name, JSONObject properties ) {
         super( src );
         this.name = name;
         this.properties = properties;
@@ -48,7 +48,7 @@ public class OlEvent
     }
 
 
-    public JsonObject properties() {
+    public JSONObject properties() {
         return properties;
     }
 }

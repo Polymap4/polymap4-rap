@@ -34,6 +34,7 @@ import org.eclipse.rap.rwt.client.service.JavaScriptLoader;
 import org.eclipse.rap.rwt.remote.AbstractOperationHandler;
 import org.eclipse.rap.rwt.remote.Connection;
 import org.eclipse.rap.rwt.remote.RemoteObject;
+import org.json.JSONObject;
 import org.polymap.rap.openlayers.OlPlugin;
 import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
 import org.polymap.rap.openlayers.util.Stringer;
@@ -86,7 +87,7 @@ public class OlSessionHandler {
 
         @Override
         public void handleCall( String method, JsonObject properties ) {
-            log.warn( this + ".handleCall " + method + ";" + properties.toString() );
+//            log.warn( this + ".handleCall " + method + ";" + properties.toString() );
             if ("handleOnRender".equals( method )) {
                 isRendered = true;
                 for (RemoteCall call : calls) {
@@ -101,7 +102,7 @@ public class OlSessionHandler {
                     properties.remove( "event_src_obj" );
                     OlObject obj = getObject( objRef );
                     if (obj != null) {
-                        obj.handleEvent( new OlEvent( obj, method, properties ) );
+                        obj.handleEvent( new OlEvent( obj, method, new JSONObject( properties.toString() ) ) );
                     }
                 }
             }

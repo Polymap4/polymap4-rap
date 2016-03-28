@@ -51,8 +51,8 @@ function loadCSS(url) {
 	}
 
 	map.OlWidget = function(properties) {
-		console.log("map.OlWidget created()");
-		console.log("window.map ", window.map);
+//		console.log("map.OlWidget created()");
+//		console.log("window.map ", window.map);
 		this.objs = {};
 		this.listenerKeys = {};
 		this.events = {};
@@ -66,27 +66,27 @@ function loadCSS(url) {
 		repaint : false,
 
 		createDiv : function(id) {
-			console.log('create map in ' + id);
+//			console.log('create map in ' + id);
 			var parent = rap.getObject(id);
 // console.log('parent is ' + parent.getAttribute('id'));
 			var element = document.createElement('div');
 			element.setAttribute("id", id + id);
 			parent.append(element);
 
-			console.log('element id is ' + element.getAttribute("id"));
+//			console.log('element id is ' + element.getAttribute("id"));
 			// this.remoteObject = rap.getRemoteObject(this);
 			return element;
 		},
 
 		onRender : function() {
 
-			console.log("onRender");
+//			console.log("onRender");
 			// this.remoteObject = rap.getRemoteObject(this);
 			// rwt.ui.core.Widget.flushGlobalQueues();
 			// if (this.element.parentNode) {
 			rap.off("render", this.onRender);
 			// if (this._map == null) {
-			console.log("onRender creating map");
+//			console.log("onRender creating map");
 			this.ready = true;
 			// this.layout();
 			// // OpenLayers.ImgPath = "/rwt-resources/map/img/";
@@ -178,8 +178,8 @@ function loadCSS(url) {
 		},
 		
 		addListener : function(properties) {
-			console.log('addListener:  ', properties);
-			console.log('obj', this.objs[properties.src]);
+//			console.log('addListener:  ', properties);
+//			console.log('obj', this.objs[properties.src]);
 			var key = this.objs[properties.src].on(properties.event, function(
 					theEvent) {
 //				console.log(this.objs[properties.src].getProperties());
@@ -199,16 +199,16 @@ function loadCSS(url) {
 				var newTimeOut = window.setTimeout(function() {/*console.log(properties.code);*/eval(properties.code);},100);
 				this.events[theEvent + theEvent.type] = newTimeOut;
 			}, this);
-			console.log('key:  ', key);
+//			console.log('key:  ', key);
 			// listeners stored by key, do later remove them from the global
 			// goog context
 			this.listenerKeys[properties.hashCode] = key;
 		},
 
 		removeListener : function(properties) {
-			console.log('remove:  ', properties);
+//			console.log('remove:  ', properties);
 			var key = this.listenerKeys[properties.hashCode];
-			console.log('remove:  ', key);
+//			console.log('remove:  ', key);
 			this.objs[properties.src].unByKey(key);
 		}
 	};

@@ -32,14 +32,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.rap.json.JsonArray;
-import org.eclipse.rap.json.JsonObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.polymap.core.runtime.UIThreadExecutor;
 import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
 import org.polymap.rap.openlayers.base.OlFeature;
@@ -74,11 +74,11 @@ public class SelectInteractionTab
         super( "SelectInteraction" );
     }
 
-    private final static Log                   log              = LogFactory.getLog( SelectInteractionTab.class );
+    private final static Log                   log      = LogFactory.getLog( SelectInteractionTab.class );
 
-    private Map<Pair<Double,Double>,Boolean>   selected         = new HashMap<Pair<Double,Double>,Boolean>();
+    private Map<Pair<Double,Double>,Boolean>   selected = new HashMap<Pair<Double,Double>,Boolean>();
 
-    private Map<Pair<Double,Double>,OlFeature> coords           = new HashMap<Pair<Double,Double>,OlFeature>();
+    private Map<Pair<Double,Double>,OlFeature> coords   = new HashMap<Pair<Double,Double>,OlFeature>();
 
     private Layer<VectorSource>                vector;
 
@@ -86,42 +86,43 @@ public class SelectInteractionTab
 
     private Layer<VectorSource>                vectorSelected;
 
-    private ISelectionChangedListener selectionListener;
+    private ISelectionChangedListener          selectionListener;
 
 
     @Override
     protected void createDemoControls( Composite parent ) {
         map = defaultMap( parent );
 
-        VectorSource source = new VectorSource().format.put( new GeoJSONFormat() ).attributions.put( Arrays
-                .asList( new Attribution( "Steffen Stundzig" ) ) );
+        VectorSource source = new VectorSource().format.put( new GeoJSONFormat() ).attributions
+                .put( Arrays.asList( new Attribution( "Steffen Stundzig" ) ) );
 
-        vector = new VectorLayer().style.put( new Style().fill.put( new FillStyle().color.put( new Color( 0, 0, 255,
-                0.1f ) ) ).stroke.put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
-                .put( source );
+        vector = new VectorLayer().style
+                .put( new Style().fill.put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke
+                        .put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
+                                .put( source );
 
-        OlFeature olFeature1 = new OlFeature("Test1");
+        OlFeature olFeature1 = new OlFeature( "Test1" );
         olFeature1.name.set( "Test1" );
         Coordinate coord1 = map.view.get().center.get();
-        double coord1X = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 0 )); 
+        double coord1X = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 0 ));
         double coord1Y = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 1 ));
         coords.put( Pair.of( coord1X, coord1Y ), olFeature1 );
         olFeature1.geometry.set( new PointGeometry( coord1 ) );
-        olFeature1.style.put( new Style().stroke.put( new StrokeStyle().color.put( new Color( "green" ) ).width
-                .put( 2f ) ).image.put( new CircleStyle( 5.0f ).fill.put( new FillStyle().color
-                .put( new Color( "red" ) ) ) ) );
+        olFeature1.style.put(
+                new Style().stroke.put( new StrokeStyle().color.put( new Color( "green" ) ).width.put( 2f ) ).image
+                        .put( new CircleStyle( 5.0f ).fill.put( new FillStyle().color.put( new Color( "red" ) ) ) ) );
         source.addFeature( olFeature1 );
 
-        OlFeature olFeature2 = new OlFeature("Test2");
+        OlFeature olFeature2 = new OlFeature( "Test2" );
         olFeature2.name.set( "Test2" );
-        double coord2X = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 0 )) + 1000; 
+        double coord2X = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 0 )) + 1000;
         double coord2Y = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 1 )) + 1000;
-        Coordinate coord2 = new Coordinate(coord2X, coord2Y);
+        Coordinate coord2 = new Coordinate( coord2X, coord2Y );
         coords.put( Pair.of( coord2X, coord2Y ), olFeature2 );
         olFeature2.geometry.set( new PointGeometry( coord2 ) );
-        olFeature2.style.put( new Style().stroke.put( new StrokeStyle().color.put( new Color( "green" ) ).width
-                .put( 2f ) ).image.put( new CircleStyle( 5.0f ).fill.put( new FillStyle().color
-                .put( new Color( "red" ) ) ) ) );
+        olFeature2.style.put(
+                new Style().stroke.put( new StrokeStyle().color.put( new Color( "green" ) ).width.put( 2f ) ).image
+                        .put( new CircleStyle( 5.0f ).fill.put( new FillStyle().color.put( new Color( "red" ) ) ) ) );
         source.addFeature( olFeature2 );
 
         map.addLayer( vector );
@@ -129,16 +130,16 @@ public class SelectInteractionTab
         PayLoad payload = new PayLoad();
         payload.add( "feature", "{}" );
         payload.add( "feature.pixel", "theEvent.pixel" );
-        payload.add( "feature.coordinate", map.getJSObjRef().replace( "this.objs", "that.objs" )
-                + ".getCoordinateFromPixel(theEvent.pixel)" );
-        
+        payload.add( "feature.coordinate",
+                map.getJSObjRef().replace( "this.objs", "that.objs" ) + ".getCoordinateFromPixel(theEvent.pixel)" );
+
         map.addEventListener( OlMap.Event.click, event -> {
-            JsonObject json = event.properties();
-            JsonObject feature = (JsonObject)json.get( "feature" );
-            JsonArray coordinate = (JsonArray)feature.get( "coordinate" );
-            handleSelectionEvent( coordinate.get( 0 ).asDouble(), coordinate.get( 1 ).asDouble(), true );
-        });
-        
+            JSONObject json = event.properties();
+            JSONObject feature = json.getJSONObject( "feature" );
+            JSONArray coordinate = feature.getJSONArray( "coordinate" );
+            handleSelectionEvent( coordinate.getDouble( 0 ), coordinate.getDouble( 1 ), true );
+        } );
+
         selectionListener = new ISelectionChangedListener() {
 
             @Override
@@ -146,11 +147,11 @@ public class SelectInteractionTab
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
                 Map.Entry<Pair<Double,Double>,OlFeature> first = (Map.Entry<Pair<Double,Double>,OlFeature>)selection
                         .getFirstElement();
-                if(first != null) {
+                if (first != null) {
                     final List<String> fids = new ArrayList<String>();
                     fids.add( first.getValue().id.get() );
                     Pair<Double,Double> coord = first.getKey();
-                    UIThreadExecutor.async( ( ) -> handleSelectionEvent( coord.getLeft(), coord.getRight(), false ),
+                    UIThreadExecutor.async( () -> handleSelectionEvent( coord.getLeft(), coord.getRight(), false ),
                             UIThreadExecutor.logErrorMsg( "" ) );
                 }
             }
@@ -171,30 +172,31 @@ public class SelectInteractionTab
                 tableViewer.setSelection( new StructuredSelection( Lists.newArrayList() ) );
             }
 
-            if (Math.abs( x - eX ) <= 500
-                    && Math.abs( y - eY ) <= 500) {
+            if (Math.abs( x - eX ) <= 500 && Math.abs( y - eY ) <= 500) {
                 if (!selected.containsKey( entry.getKey() ) || !selected.get( entry.getKey() )) {
 
                     VectorSource sourceSelected = new VectorSource().format.put( new GeoJSONFormat() ).attributions
                             .put( Arrays.asList( new Attribution( "Steffen Stundzig" ) ) );
 
-                    vectorSelected = new VectorLayer().style.put( new Style().fill.put( new FillStyle().color
-                            .put( new Color( 0, 0, 255, 0.1f ) ) ).stroke.put( new StrokeStyle().color.put( new Color(
-                            "red" ) ).width.put( 1f ) ) ).source.put( sourceSelected );
+                    vectorSelected = new VectorLayer().style.put(
+                            new Style().fill.put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke
+                                    .put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
+                                            .put( sourceSelected );
 
-                    OlFeature olFeatureSelected = new OlFeature("Test1Selected");
+                    OlFeature olFeatureSelected = new OlFeature( "Test1Selected" );
                     olFeatureSelected.name.set( "Test1" );
-                    olFeatureSelected.geometry.set( new PointGeometry( new Coordinate(eX, eY) ) );
-                    olFeatureSelected.style.put( new Style().stroke.put( new StrokeStyle().color.put( new Color(
-                            "green" ) ).width.put( 2f ) ).image.put( new CircleStyle( 5.0f ).fill
-                            .put( new FillStyle().color.put( new Color( "blue" ) ) ) ) );
+                    olFeatureSelected.geometry.set( new PointGeometry( new Coordinate( eX, eY ) ) );
+                    olFeatureSelected.style.put( new Style().stroke
+                            .put( new StrokeStyle().color.put( new Color( "green" ) ).width.put( 2f ) ).image
+                                    .put( new CircleStyle( 5.0f ).fill
+                                            .put( new FillStyle().color.put( new Color( "blue" ) ) ) ) );
                     sourceSelected.addFeature( olFeatureSelected );
 
                     map.addLayer( vectorSelected );
 
                     selected.put( entry.getKey(), true );
-                    if(selectionFromMap) {
-                        UIThreadExecutor.async( ( ) -> {
+                    if (selectionFromMap) {
+                        UIThreadExecutor.async( () -> {
                             tableViewer.removeSelectionChangedListener( selectionListener );
                             List<Map.Entry<Pair<Double,Double>,OlFeature>> elements = new ArrayList<Map.Entry<Pair<Double,Double>,OlFeature>>();
                             elements.add( entry );
@@ -229,7 +231,7 @@ public class SelectInteractionTab
             @Override
             public String getText( Object element ) {
                 Map.Entry<Pair<Double,Double>,OlFeature> entry = (Map.Entry<Pair<Double,Double>,OlFeature>)element;
-                return String.valueOf( entry.getKey().getLeft());
+                return String.valueOf( entry.getKey().getLeft() );
             }
         } );
 
@@ -242,7 +244,7 @@ public class SelectInteractionTab
             @Override
             public String getText( Object element ) {
                 Map.Entry<Pair<Double,Double>,OlFeature> entry = (Map.Entry<Pair<Double,Double>,OlFeature>)element;
-                return String.valueOf( entry.getKey().getRight());
+                return String.valueOf( entry.getKey().getRight() );
             }
         } );
 
