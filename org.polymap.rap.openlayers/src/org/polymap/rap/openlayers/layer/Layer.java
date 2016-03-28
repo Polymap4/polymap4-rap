@@ -24,11 +24,17 @@ import org.polymap.rap.openlayers.source.Source;
  * instantiated in apps. A visual representation of raster or vector map data. Layers
  * group together those properties that pertain to how the data is to be displayed,
  * irrespective of the source of that data.
- *
- * @see <a
- *      href="http://openlayers.org/en/master/apidoc/ol.layer.Layer.html">OpenLayers
- *      Doc</a>
+ * 
+ * Layers are usually added to a map with ol.Map#addLayer. Components like
+ * ol.interaction.Select use unmanaged layers internally. These unmanaged layers are
+ * associated with the map using ol.layer.Layer#setMap instead.
+ * 
+ * A generic change event is fired when the state of the source changes.
+ * 
+ * @see <a href="http://openlayers.org/en/master/apidoc/ol.layer.Layer.html">
+ *      OpenLayers Doc</a>
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
+ * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
 public abstract class Layer<S extends Source>
         extends Base {
@@ -39,7 +45,7 @@ public abstract class Layer<S extends Source>
     public Config2<Layer<S>,S> source;
 
 
-    public Layer( String jsClassname ) {
+    protected Layer( String jsClassname ) {
         super( jsClassname );
     }
 }

@@ -25,7 +25,7 @@ import org.polymap.rap.openlayers.base.Jsonable;
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
 public class StyleFunction
-        implements Style, Jsonable {
+        implements Base, Jsonable {
 
     /**
      * The function must return a style. For an example see
@@ -42,7 +42,7 @@ public class StyleFunction
 
     @Override
     public Object toJson() {
-        return "function(feature) { " + function + "}";
+        return "function(feature, resolution) { " + function + "}";
     }
 
 }

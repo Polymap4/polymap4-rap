@@ -36,7 +36,7 @@ import org.polymap.rap.openlayers.source.VectorSource;
 import org.polymap.rap.openlayers.style.CircleStyle;
 import org.polymap.rap.openlayers.style.FillStyle;
 import org.polymap.rap.openlayers.style.StrokeStyle;
-import org.polymap.rap.openlayers.style.StyleContainer;
+import org.polymap.rap.openlayers.style.Style;
 import org.polymap.rap.openlayers.types.Attribution;
 import org.polymap.rap.openlayers.types.Color;
 import org.polymap.rap.openlayers.types.Extent;
@@ -75,7 +75,7 @@ public class GraphInteractionTab
                 .put( Arrays.asList( new Attribution( "Steffen Stundzig" ) ) );
 
         VectorLayer vector = new VectorLayer().style
-                .put( new StyleContainer().fill.put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke
+                .put( new Style().fill.put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke
                         .put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
                                 .put( source );
 
@@ -101,7 +101,7 @@ public class GraphInteractionTab
 
             private final OlFeatureGraph olFeatureGraph = new OlFeatureGraph( source, map );
 
-            private final StyleContainer nodeStyle      = new StyleContainer().zIndex.put( 0f ).image
+            private final Style nodeStyle      = new Style().zIndex.put( 0f ).image
                     .put( new CircleStyle( 5.0f ).fill.put( new FillStyle().color.put( new Color( "red" ) ) ) );
 
             private int                  click          = 0;

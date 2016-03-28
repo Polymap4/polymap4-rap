@@ -22,7 +22,7 @@ import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.rap.openlayers.geom.Geometry;
-import org.polymap.rap.openlayers.style.StyleContainer;
+import org.polymap.rap.openlayers.style.Style;
 import org.polymap.rap.openlayers.types.Coordinate;
 
 /**
@@ -48,7 +48,7 @@ public class OlFeature
     @Immutable
     @Concern(OlPropertyConcern.class)
     @OlSetter("setStyle")
-    public Config2<OlFeature,StyleContainer>      style;
+    public Config2<OlFeature,Style>      style;
 
     @Immutable
     @Concern(OlPropertyConcern.class)
@@ -80,10 +80,4 @@ public class OlFeature
         this.id.set( StringUtils.isBlank( id ) ? UUID.randomUUID().toString() : id );
         this.geometryName.set( StringUtils.isBlank( geometryName ) ? "geometry" : geometryName );
     }
-    //
-    //
-    // // TODO cannot be set via property
-    // public void setStyle( Style style ) {
-    // execute("setStyle", style);
-    // }
 }

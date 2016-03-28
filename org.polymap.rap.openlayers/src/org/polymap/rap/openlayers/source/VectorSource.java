@@ -83,12 +83,7 @@ public class VectorSource
     public Config2<VectorSource,String>            url;
 
 
-    /**
-     * Constructs a new instance.
-     *
-     * @param initializers Initialize at least all {@link Mandatory} properties.
-     */
-    public VectorSource( String jsClassname ) {
+    protected VectorSource( String jsClassname ) {
         super( jsClassname );
     }
 

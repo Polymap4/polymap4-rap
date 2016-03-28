@@ -34,7 +34,7 @@ import org.polymap.rap.openlayers.geom.LineStringGeometry;
 import org.polymap.rap.openlayers.geom.PointGeometry;
 import org.polymap.rap.openlayers.source.VectorSource;
 import org.polymap.rap.openlayers.style.StrokeStyle;
-import org.polymap.rap.openlayers.style.StyleContainer;
+import org.polymap.rap.openlayers.style.Style;
 import org.polymap.rap.openlayers.types.Color;
 import org.polymap.rap.openlayers.types.Coordinate;
 import org.polymap.rap.openlayers.types.Extent;
@@ -120,7 +120,7 @@ public class OlFeatureGraph
      */
     public void addOrUpdateEdge( final OlFeature src, final OlFeature target ) {
         addOrUpdateEdge( src, target,
-                new StyleContainer().stroke.put( new StrokeStyle().color.put( new Color( "black" ) ).width.put( 2f ) ).zIndex
+                new Style().stroke.put( new StrokeStyle().color.put( new Color( "black" ) ).width.put( 2f ) ).zIndex
                         .put( 0f ),
                 1 );
     }
@@ -139,7 +139,7 @@ public class OlFeatureGraph
      * @param style
      * @param weight
      */
-    public void addOrUpdateEdge( final OlFeature src, final OlFeature target, final StyleContainer style, int weight ) {
+    public void addOrUpdateEdge( final OlFeature src, final OlFeature target, final Style style, int weight ) {
         final String edgeId = src.id.get() + "_" + target.id.get();
         OlFeature line = edges.get( edgeId );
         if (line == null) {

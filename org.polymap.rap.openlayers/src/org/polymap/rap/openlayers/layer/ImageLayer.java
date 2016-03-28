@@ -12,23 +12,22 @@
  */
 package org.polymap.rap.openlayers.layer;
 
-import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.rap.openlayers.source.ImageSource;
 
 /**
  * Server-rendered images that are available for arbitrary extents and resolutions.
+ * Note that any property set in the options is set as a ol.Object property on the
+ * layer object; for example, setting title: 'My Title' in the options means that
+ * title is observable, and has get/set accessors.
  * 
- * @see <a
- *      href="http://openlayers.org/en/master/apidoc/ol.layer.Image.html">OpenLayers
- *      Doc</a>
+ * @see <a href="http://openlayers.org/en/master/apidoc/ol.layer.Image.html">
+ *      OpenLayers Doc</a>
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
+ * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
 public class ImageLayer
         extends Layer<ImageSource> {
 
-    /**
-     * Constructs a new instance.
-     */
     public ImageLayer() {
         super( "ol.layer.Image" );
     }

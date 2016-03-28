@@ -18,14 +18,13 @@ package org.polymap.rap.openlayers.source;
  * 
  * @see <a href="http://openlayers.org/en/master/apidoc/ol.source.Image.html">OpenLayers Doc</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
- *
  */
 public abstract class ImageSource
         extends Source {
 
     // TODO options
 
-    public ImageSource( String jsClassname ) {
+    protected ImageSource( String jsClassname ) {
         super( jsClassname );
     }
 

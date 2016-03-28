@@ -15,35 +15,73 @@
  */
 package org.polymap.rap.openlayers.source;
 
-import java.util.Arrays;
-import java.util.function.Consumer;
-
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
+import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 
 /**
- * @author "Joerg Reichert <joerg@mapzone.io>"
- *
+ * Layer source to cluster vector data. Works out of the box with point geometries.
+ * For other geometry types, or if not all geometries should be considered for
+ * clustering, a custom geometryFunction can be defined.
+ * 
+ * A clusterSource could be added into a vector layer. Then the vector layer needs a
+ * style function similar to:
+ * 
+ * <pre>
+ * var size = feature.get('features').length;
+ * if (size == 1 && feature.get('features')[0].getStyle() != null) {
+ *   return [feature.get('features')[0].getStyle()];
+ * }
+ * return [new ol.style.Style({
+ *   image: new ol.style.Circle({
+ *       radius: 10,
+ *     stroke: new ol.style.Stroke({
+ *       color: '#fff'
+ *     }),
+ *     fill: new ol.style.Fill({
+ *       color: '#3399CC'
+ *     })
+ *   }),
+ *   text: new ol.style.Text({
+ *     text: size.toString(),
+ *     fill: new ol.style.Fill({
+ *     color: '#fff'
+ *     })
+ *   })
+ * })];
+ * </pre>
+ * 
+ * This function styles aggregated features and uses the individual feature of single
+ * nodes, if they exists.
+ * 
+ * @see <a href="http://openlayers.org/en/master/apidoc/ol.source.Cluster.html">
+ *      OpenLayers Doc</a>
+ * 
+ * @author <a href="mailto:joerg@mapzone.io">Joerg Reichert</a>
+ * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
 public class ClusterSource
         extends VectorSource {
 
+    /**
+     * Source. Required.
+     */
+    @Immutable
+    @Mandatory
     @Concern(OlPropertyConcern.class)
     public Config2<ClusterSource,VectorSource> source;
 
+    /**
+     * Minimum distance in pixels between clusters. Default is 20.
+     */
+    @Immutable
     @Concern(OlPropertyConcern.class)
     public Config2<ClusterSource,Double>       distance;
 
 
-    /**
-     * Constructs a new instance.
-     *
-     * @param initializers Initialize at least all {@link Mandatory} properties.
-     */
-    public ClusterSource( Consumer<ClusterSource>... initializers ) {
+    public ClusterSource() {
         super( "ol.source.Cluster" );
-        Arrays.asList( initializers ).forEach( initializer -> initializer.accept( this ) );
     }
 }

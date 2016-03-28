@@ -35,7 +35,7 @@ import org.polymap.rap.openlayers.style.CircleStyle;
 import org.polymap.rap.openlayers.style.FillStyle;
 import org.polymap.rap.openlayers.style.Font;
 import org.polymap.rap.openlayers.style.StrokeStyle;
-import org.polymap.rap.openlayers.style.StyleContainer;
+import org.polymap.rap.openlayers.style.Style;
 import org.polymap.rap.openlayers.style.TextStyle;
 import org.polymap.rap.openlayers.types.Attribution;
 import org.polymap.rap.openlayers.types.Color;
@@ -68,7 +68,7 @@ public class FeatureVectorTab
         source = new VectorSource().format.put( new GeoJSONFormat() ).attributions.put( Arrays
                 .asList( new Attribution( "Steffen Stundzig" ) ) );
 
-        VectorLayer vector = new VectorLayer().style.put( new StyleContainer().fill
+        VectorLayer vector = new VectorLayer().style.put( new Style().fill
                 .put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke
                 .put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
                 .put( source );
@@ -98,7 +98,7 @@ public class FeatureVectorTab
                 OlFeature feature = new OlFeature("P1");
                 feature.labelPoint.set( map.view.get().center.get() );
                 feature.geometry.set( new PointGeometry( map.view.get().center.get() ) );
-                feature.style.put( new StyleContainer().text.put( new TextStyle().text.put( "MY MESSAGE" ).font
+                feature.style.put( new Style().text.put( new TextStyle().text.put( "MY MESSAGE" ).font
                         .put( new Font().family.put( Font.Family.CourierNew ).weight
                                 .put( Font.Weight.bold ).size.put( 24 ) ).stroke
                         .put( new StrokeStyle().color.put( new Color( "green" ) ).width.put( 2f ) ) ).image
@@ -113,7 +113,7 @@ public class FeatureVectorTab
                         new Coordinate( -13351395.095766516, 7297102.400714279 ), new Coordinate(
                                 -10888602.372351898, 7688021.880621362 ), new Coordinate(
                                 -12393642.369994164, 9388521.61821717 ) ) );
-                feature2.style.put( new StyleContainer().fill.put( new FillStyle().color.put( new Color(
+                feature2.style.put( new Style().fill.put( new FillStyle().color.put( new Color(
                         "red" ) ) ).stroke.put( new StrokeStyle().color.put( new Color( "blue" ) ).width
                         .put( 10f ) ) );
                 source.addFeatures( feature, feature2 );
