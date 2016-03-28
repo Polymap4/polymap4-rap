@@ -1,5 +1,8 @@
 /*
- * polymap.org Copyright (C) 2009-2014, Polymap GmbH. All rights reserved.
+ * <<<<<<< HEAD polymap.org Copyright (C) 2009-2014, Polymap GmbH. All rights
+ * reserved. ======= polymap.org Copyright (C) @year@ individual contributors as
+ * indicated by the @authors tag. All rights reserved. >>>>>>>
+ * 6a8ac5780fb40f90177477dc3c07d601caabbe90
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -12,57 +15,35 @@
  */
 package org.polymap.rap.openlayers.source;
 
+import java.util.Arrays;
+import java.util.function.Consumer;
+
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.rap.openlayers.base.OlFeature;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
-
 /**
- * Layer source to cluster vector data.
- * 
- * @see <a href="http://openlayers.org/en/v3.6.0/apidoc/ol.source.Cluster.html">
- *      OpenLayers Doc</a>
- * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
- * @author <a href="http://mapzone.io">Steffen Stundzig</a>
+ * @author "Joerg Reichert <joerg@mapzone.io>"
+ *
  */
 public class ClusterSource
         extends VectorSource {
 
-    // TODO more properties
-
-    @Immutable
-    @Mandatory
     @Concern(OlPropertyConcern.class)
     public Config2<ClusterSource,VectorSource> source;
 
-    @Immutable
-    @Mandatory
     @Concern(OlPropertyConcern.class)
-    public Config2<ClusterSource,Integer>      distance;
+    public Config2<ClusterSource,Double>       distance;
 
 
-    public ClusterSource( VectorSource source, Integer distance ) {
+    /**
+     * Constructs a new instance.
+     *
+     * @param initializers Initialize at least all {@link Mandatory} properties.
+     */
+    public ClusterSource( Consumer<ClusterSource>... initializers ) {
         super( "ol.source.Cluster" );
-        this.source.set( source );
-        this.distance.set( distance );
+        Arrays.asList( initializers ).forEach( initializer -> initializer.accept( this ) );
     }
-
-//
-//    public void addFeature( OlFeature feature ) {
-//        source.get().addFeature( feature );
-//    }
-//
-//
-//    public void addFeatures( OlFeature... features ) {
-//        source.get().addFeatures( features );
-//    }
-//
-//
-//    public void removeFeature( OlFeature feature ) {
-//        source.get().removeFeature( feature );
-//    }
-
 }

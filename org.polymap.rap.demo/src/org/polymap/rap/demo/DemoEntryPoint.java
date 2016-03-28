@@ -124,9 +124,10 @@ public class DemoEntryPoint
 
 
     private static DemoTab[] createExampleTabs() {
-        return new DemoTab[] { new ClickControlTab(), new DrawInteractionTab(), new ExtentTab(),
-                new FeatureVectorTab(), new GraphInteractionTab(), new ResolutionsTab(),
-                new SelectInteractionTab(), new ScaleLineControlTab(), new ZoomControlTab(),
-                new ZoomSliderControlTab() };
+        return new DemoTab[] { new ClickControlTab(), new ClusterTab(), 
+                new DrawInteractionTab(), new ExtentTab(), 
+                new FeatureVectorTab(), new ResolutionsTab(), 
+                new SelectInteractionTab(), new ScaleLineControlTab(), 
+                new ZoomControlTab(), new ZoomSliderControlTab() };
     }
 }
