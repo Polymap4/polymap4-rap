@@ -58,15 +58,22 @@ public class OlMap
 
 
     public enum Event {
-        layerGroup("change:layerGroup"), size("change:size"), target("change:target"), view("change:view"),
-        click("click"), boxstart("boxstart"), boxend("boxend");
-        
+        layerGroup( "change:layerGroup" ),
+        size( "change:size" ),
+        target( "change:target" ),
+        view( "change:view" ),
+        click( "click" ),
+        boxstart( "boxstart" ),
+        boxend( "boxend" );
+
         private String eventName;
-        
-        Event(String eventName) {
+
+
+        Event( String eventName ) {
             this.eventName = eventName;
         }
-        
+
+
         public String getEventName() {
             return eventName;
         }
@@ -74,21 +81,21 @@ public class OlMap
 
     @Mandatory
     @Immutable
-    public Config2<OlMap,View>      view;
-    
+    public Config2<OlMap,View>               view;
+
     private Config2<OlMap,List<Interaction>> interactions;
 
     @Mandatory
     @Immutable
-    private Config2<OlMap,Unquoted> target;
+    private Config2<OlMap,Unquoted>          target;
 
-    private Composite               widget;
+    private Composite                        widget;
 
 
     public OlMap( Composite parent, int style, View view ) {
         super( "ol.Map" );
         this.view.set( view );
-//        this.interactions.set( new ArrayList<Interaction>() );
+        // this.interactions.set( new ArrayList<Interaction>() );
         view.setMap( this );
 
         widget = new Composite( parent, style );
@@ -96,10 +103,12 @@ public class OlMap
 
             private static final long serialVersionUID = 1L;
 
+
             @Override
             protected void layout( Composite composite, boolean flushCache ) {
                 update();
             }
+
 
             @Override
             protected Point computeSize( Composite composite, int wHint, int hHint, boolean flushCache ) {
@@ -109,25 +118,25 @@ public class OlMap
         this.target.set( new Unquoted( "this.createDiv('" + WidgetUtil.getId( widget ) + "')" ) );
     }
 
-    
+
     public Composite getControl() {
         return widget;
     }
-    
-//    
-//    @SuppressWarnings("unchecked")
-//    public <T extends Interaction> T getInteraction( Class<T> clazz ) {
-//        if(interactions.get() != null) {
-//            for(Interaction interaction : interactions.get()) {
-//                if(clazz.isAssignableFrom( interaction.getClass() )) {
-//                    return (T) interaction;
-//                }
-//            }
-//        }
-//        return null;
-//    }    
 
-    
+    //
+    // @SuppressWarnings("unchecked")
+    // public <T extends Interaction> T getInteraction( Class<T> clazz ) {
+    // if(interactions.get() != null) {
+    // for(Interaction interaction : interactions.get()) {
+    // if(clazz.isAssignableFrom( interaction.getClass() )) {
+    // return (T) interaction;
+    // }
+    // }
+    // }
+    // return null;
+    // }
+
+
     /**
      * Adds the given layer to the top of this map.
      */
@@ -153,7 +162,6 @@ public class OlMap
     // public void setLayerIndex(Layer layer, int index) {
     // callObjFunction("setLayerIndex", layer, index);
     // }
-
 
     public void addControl( Control control ) {
         call( "addControl", control );
@@ -196,32 +204,36 @@ public class OlMap
     // }
 
     /**
-     * The event contains the new center, resolution and rotation
+     * The event contains the new center, resolution and rotation.
      * 
      * @param event
-     * @param listener
+     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
      */
     public void addEventListener( Event event, OlEventListener listener ) {
         PayLoad payload = null;
-        if(event == Event.click) {
+        if (event == Event.click) {
             payload = new PayLoad();
             payload.add( "feature", "{}" );
             payload.add( "feature.pixel", "theEvent.pixel" );
-            payload.add( "feature.coordinate", "that.objs['" + getObjRef() + "'].getCoordinateFromPixel(theEvent.pixel)" );
-        } else if(event == Event.boxstart || event == Event.boxend) {
+            payload.add( "feature.coordinate",
+                    "that.objs['" + getObjRef() + "'].getCoordinateFromPixel(theEvent.pixel)" );
+        }
+        else if (event == Event.boxstart || event == Event.boxend) {
             payload = new PayLoad();
             payload.add( "feature", "{}" );
-            payload.add( "feature.pixel", "that.objs['" + getObjRef() + "'].getPixelFromCoordinate(theEvent.coordinate)" );
+            payload.add( "feature.pixel",
+                    "that.objs['" + getObjRef() + "'].getPixelFromCoordinate(theEvent.coordinate)" );
             payload.add( "feature.coordinate", "theEvent.coordinate" );
         }
         addEventListener( event.getEventName(), listener, payload );
     }
 
+
     public void removeEventListener( Event event, OlEventListener listener ) {
         removeEventListener( event.getEventName(), listener );
     }
 
-    
+
     private void update() {
         call( "this.obj.updateSize();" );
     }

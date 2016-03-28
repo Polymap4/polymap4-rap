@@ -98,6 +98,11 @@ public class VectorSource
     }
 
 
+    /**
+     * 
+     * @param event
+     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+     */
     public void addEventListener( Event event, OlEventListener listener ) {
         // Map<String, String> props = new HashMap<String, String>();
         // if (event == EVENT.addfeature || event == EVENT.removefeature) {

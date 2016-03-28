@@ -160,7 +160,7 @@ public class View
      * rotation
      * 
      * @param event
-     * @param listener
+     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
      */
     public void addEventListener( Event event, OlEventListener listener ) {
         addEventListener( "change:" + event.name(), listener, null );
@@ -172,6 +172,11 @@ public class View
     }
 
 
+    /**
+     * 
+     * @param event
+     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+     */
     public void addPropertyChangeListener( OlEventListener listener ) {
         addEventListener( "propertychange", listener, null );
     }

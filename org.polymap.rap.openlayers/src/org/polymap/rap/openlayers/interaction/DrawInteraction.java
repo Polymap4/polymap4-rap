@@ -19,20 +19,20 @@ import org.polymap.rap.openlayers.base.Jsonable;
 import org.polymap.rap.openlayers.base.OlEventListener;
 import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
-import org.polymap.rap.openlayers.geom.GeometryType;
 import org.polymap.rap.openlayers.source.VectorSource;
 
 /**
  * Interaction that allows drawing geometries.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.interaction.Draw.html">OpenLayers Doc</a>
+ * @see <a href="http://openlayers.org/en/master/apidoc/ol.interaction.Draw.html">
+ *      OpenLayers Doc</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
 public class DrawInteraction
         extends Interaction {
 
     public enum Event {
-        active("change:active"), drawend("drawend"), drawstart("drawstart");
+        active( "change:active" ), drawend( "drawend" ), drawstart( "drawstart" );
 
         private String value;
 
@@ -75,6 +75,11 @@ public class DrawInteraction
     }
 
 
+    /**
+     * 
+     * @param event
+     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+     */
     public void addEventListener( Event event, OlEventListener listener ) {
         PayLoad payload = new PayLoad();
         if (event == Event.drawend) {
