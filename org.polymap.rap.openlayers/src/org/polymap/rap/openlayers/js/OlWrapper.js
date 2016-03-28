@@ -182,11 +182,13 @@ function loadCSS(url) {
 			console.log('obj', this.objs[properties.src]);
 			var key = this.objs[properties.src].on(properties.event, function(
 					theEvent) {
-				console.log(this.objs[properties.src].getProperties());
-				console.log("theEvent");
-				console.log(theEvent);
-				console.log("theEvent.feature");
-				console.log(theEvent.feature);
+//				console.log(this.objs[properties.src].getProperties());
+//				console.log("theEvent");
+//				console.log(theEvent);
+//				console.log("theEvent.feature");
+//				console.log(theEvent.feature);
+//				console.log("theEvent.selected");
+//				console.log(theEvent.selected[0].getObject());
 				var oldTimeOut = this.events[theEvent + theEvent.type];
 				if (oldTimeOut) {
 					window.clearTimeout(oldTimeOut);
@@ -194,7 +196,7 @@ function loadCSS(url) {
 				var that = this;
 				// wait 100ms for sending the event, newer events will remove
 				// this call
-				var newTimeOut = window.setTimeout(function() {console.log(properties.code);eval(properties.code);},100);
+				var newTimeOut = window.setTimeout(function() {/*console.log(properties.code);*/eval(properties.code);},100);
 				this.events[theEvent + theEvent.type] = newTimeOut;
 			}, this);
 			console.log('key:  ', key);

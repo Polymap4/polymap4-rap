@@ -12,7 +12,6 @@
  */
 package org.polymap.rap.openlayers.base;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -27,7 +26,6 @@ import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
 import org.polymap.rap.openlayers.base.OlPropertyConcern.Unquoted;
 import org.polymap.rap.openlayers.control.Control;
-import org.polymap.rap.openlayers.interaction.DrawInteraction;
 import org.polymap.rap.openlayers.interaction.Interaction;
 import org.polymap.rap.openlayers.layer.Layer;
 import org.polymap.rap.openlayers.source.Source;

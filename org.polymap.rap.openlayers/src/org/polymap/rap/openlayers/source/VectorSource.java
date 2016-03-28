@@ -15,8 +15,8 @@ package org.polymap.rap.openlayers.source;
 import java.util.List;
 
 import org.polymap.core.runtime.config.Concern;
-import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.core.runtime.config.Config2;
+import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.rap.openlayers.base.OlEventListener;
 import org.polymap.rap.openlayers.base.OlFeature;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
@@ -27,7 +27,8 @@ import org.polymap.rap.openlayers.util.Stringer;
 /**
  * Provides a source of features for vector layers.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.source.Vector.html">OpenLayers Doc</a>
+ * @see <a href="http://openlayers.org/en/master/apidoc/ol.source.Vector.html">
+ *      OpenLayers Doc</a>
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  * @author <a href="http://mapzone.io">Steffen Stundzig</a>
  */
@@ -129,6 +130,12 @@ public class VectorSource
             command.add( feature.getJSObjRef() );
         }
         command.add( "]);" );
+        call( command.toString() );
+    }
+
+
+    public void removeFeature( OlFeature feature ) {
+        Stringer command = new Stringer( "this.obj.removeFeatures(", feature.getJSObjRef(), ");" );
         call( command.toString() );
     }
 

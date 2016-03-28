@@ -25,7 +25,7 @@ import org.polymap.core.runtime.config.Config2;
 import org.polymap.rap.openlayers.base.OlProperty;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.style.StrokeStyle;
-import org.polymap.rap.openlayers.style.Style;
+import org.polymap.rap.openlayers.style.StyleContainer;
 
 /**
  * A control with 2 buttons, one for zoom in and one for zoom out. This control is

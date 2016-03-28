@@ -52,7 +52,7 @@ import org.polymap.rap.openlayers.source.VectorSource;
 import org.polymap.rap.openlayers.style.CircleStyle;
 import org.polymap.rap.openlayers.style.FillStyle;
 import org.polymap.rap.openlayers.style.StrokeStyle;
-import org.polymap.rap.openlayers.style.Style;
+import org.polymap.rap.openlayers.style.StyleContainer;
 import org.polymap.rap.openlayers.types.Attribution;
 import org.polymap.rap.openlayers.types.Color;
 import org.polymap.rap.openlayers.types.Coordinate;
@@ -96,32 +96,30 @@ public class SelectInteractionTab
         VectorSource source = new VectorSource().format.put( new GeoJSONFormat() ).attributions.put( Arrays
                 .asList( new Attribution( "Steffen Stundzig" ) ) );
 
-        vector = new VectorLayer().style.put( new Style().fill.put( new FillStyle().color.put( new Color( 0, 0, 255,
+        vector = new VectorLayer().style.put( new StyleContainer().fill.put( new FillStyle().color.put( new Color( 0, 0, 255,
                 0.1f ) ) ).stroke.put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
                 .put( source );
 
-        OlFeature olFeature1 = new OlFeature();
-        olFeature1.id.set( "Test1" );
+        OlFeature olFeature1 = new OlFeature("Test1");
         olFeature1.name.set( "Test1" );
         Coordinate coord1 = map.view.get().center.get();
         double coord1X = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 0 )); 
         double coord1Y = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 1 ));
         coords.put( Pair.of( coord1X, coord1Y ), olFeature1 );
         olFeature1.geometry.set( new PointGeometry( coord1 ) );
-        olFeature1.style.put( new Style().stroke.put( new StrokeStyle().color.put( new Color( "green" ) ).width
+        olFeature1.style.put( new StyleContainer().stroke.put( new StrokeStyle().color.put( new Color( "green" ) ).width
                 .put( 2f ) ).image.put( new CircleStyle( 5.0f ).fill.put( new FillStyle().color
                 .put( new Color( "red" ) ) ) ) );
         source.addFeature( olFeature1 );
 
-        OlFeature olFeature2 = new OlFeature();
-        olFeature2.id.set( "Test2" );
+        OlFeature olFeature2 = new OlFeature("Test2");
         olFeature2.name.set( "Test2" );
         double coord2X = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 0 )) + 1000; 
         double coord2Y = ((Double)((org.json.JSONArray)map.view.get().center.get().toJson()).get( 1 )) + 1000;
         Coordinate coord2 = new Coordinate(coord2X, coord2Y);
         coords.put( Pair.of( coord2X, coord2Y ), olFeature2 );
         olFeature2.geometry.set( new PointGeometry( coord2 ) );
-        olFeature2.style.put( new Style().stroke.put( new StrokeStyle().color.put( new Color( "green" ) ).width
+        olFeature2.style.put( new StyleContainer().stroke.put( new StrokeStyle().color.put( new Color( "green" ) ).width
                 .put( 2f ) ).image.put( new CircleStyle( 5.0f ).fill.put( new FillStyle().color
                 .put( new Color( "red" ) ) ) ) );
         source.addFeature( olFeature2 );
@@ -180,15 +178,14 @@ public class SelectInteractionTab
                     VectorSource sourceSelected = new VectorSource().format.put( new GeoJSONFormat() ).attributions
                             .put( Arrays.asList( new Attribution( "Steffen Stundzig" ) ) );
 
-                    vectorSelected = new VectorLayer().style.put( new Style().fill.put( new FillStyle().color
+                    vectorSelected = new VectorLayer().style.put( new StyleContainer().fill.put( new FillStyle().color
                             .put( new Color( 0, 0, 255, 0.1f ) ) ).stroke.put( new StrokeStyle().color.put( new Color(
                             "red" ) ).width.put( 1f ) ) ).source.put( sourceSelected );
 
-                    OlFeature olFeatureSelected = new OlFeature();
-                    olFeatureSelected.id.set( "Test1Selected" );
+                    OlFeature olFeatureSelected = new OlFeature("Test1Selected");
                     olFeatureSelected.name.set( "Test1" );
                     olFeatureSelected.geometry.set( new PointGeometry( new Coordinate(eX, eY) ) );
-                    olFeatureSelected.style.put( new Style().stroke.put( new StrokeStyle().color.put( new Color(
+                    olFeatureSelected.style.put( new StyleContainer().stroke.put( new StrokeStyle().color.put( new Color(
                             "green" ) ).width.put( 2f ) ).image.put( new CircleStyle( 5.0f ).fill
                             .put( new FillStyle().color.put( new Color( "blue" ) ) ) ) );
                     sourceSelected.addFeature( olFeatureSelected );

@@ -20,9 +20,9 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONString;
+import org.polymap.core.runtime.config.Config;
 import org.polymap.core.runtime.config.ConfigurationException;
 import org.polymap.core.runtime.config.DefaultPropertyConcern;
-import org.polymap.core.runtime.config.Config;
 
 /**
  * Synchronizes the value of a {@link Config} of an {@link OlObject},
@@ -36,66 +36,75 @@ import org.polymap.core.runtime.config.Config;
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  */
 public class OlPropertyConcern
-        extends DefaultPropertyConcern {
+        extends DefaultPropertyConcern<Object> {
 
     private static Log log = LogFactory.getLog( OlPropertyConcern.class );
 
 
     @Override
-    public Object doSet( Object obj, Config prop, Object value ) {
-        // log.info( obj.getClass().getSimpleName() + "." + prop.info().getName() +
-        // " = " + value );
+    public Object doSet( Object obj, Config<Object> prop, Object value ) {
+        //log.info( obj.getClass().getSimpleName() + "." + prop.info().getName() + " = " + value );
 
         OlSetter setterAnnotation = prop.info().getAnnotation( OlSetter.class );
+        OlCtorAndSeparateSetter ctorAndSetterAnnotation = prop.info()
+                .getAnnotation( OlCtorAndSeparateSetter.class );
         OlProperty propertyAnnotation = prop.info().getAnnotation( OlProperty.class );
-        
+
         // setter
         if (setterAnnotation != null) {
             assert propertyAnnotation == null;
+            assert ctorAndSetterAnnotation == null;
             ((OlObject)obj).call( setterAnnotation.value(), value );
         }
-        
+        else if (ctorAndSetterAnnotation != null && ((OlObject)obj).isCreated()) {
+            // use the setter if it is created
+            ((OlObject)obj).call( ctorAndSetterAnnotation.value(), value );
+        }
         // property
         else {
             assert setterAnnotation == null;
+
             // is the object created as JS on the client already?
             // if it is created, then we just set the attribute
             if (((OlObject)obj).isCreated()) {
 
                 Object jsonValue = propertyAsJson( value );
 
-                String propName = propertyAnnotation != null ? propertyAnnotation.value() : prop.info().getName();
+                String propName = propertyAnnotation != null ? propertyAnnotation.value()
+                        : prop.info().getName();
                 ((OlObject)obj).setAttribute( propName, jsonValue );
             }
         }
         return value;
     }
 
-//
-//    @Override
-//    public Object doGet( Object obj, Property prop, Object value ) {
-//        log.info( obj.getClass().getSimpleName() + "." + prop.info().getName() + " = " + value );
-//
-////        OlMethodProperty setter = prop.info().getAnnotation( OlMethodProperty.class );
-////        if (setter != null) {
-////            ((OlObject)obj).execute( setter.value(), value );
-////        }
-////        else {
-//            // is the object created as JS on the client already?
-//            // if it is created, we must call the setter of this obj
-//            if (((OlObject)obj).getObjRef() != null) {
-//
-//                Object jsonValue = propertyAsJson( prop, value );
-//
-//                OlProperty a = prop.info().getAnnotation( OlProperty.class );
-//                String propName = a != null ? a.value() : prop.info().getName();
-//                Object res = ((OlObject)obj).getAttribute( propName );
-//            } else {
-//                return super.doGet( obj, prop, value );
-//            }
-//        // }
-//        // return value;
-//    }
+    //
+    // @Override
+    // public Object doGet( Object obj, Property prop, Object value ) {
+    // log.info( obj.getClass().getSimpleName() + "." + prop.info().getName() + " = "
+    // + value );
+    //
+    //// OlMethodProperty setter = prop.info().getAnnotation( OlMethodProperty.class
+    // );
+    //// if (setter != null) {
+    //// ((OlObject)obj).execute( setter.value(), value );
+    //// }
+    //// else {
+    // // is the object created as JS on the client already?
+    // // if it is created, we must call the setter of this obj
+    // if (((OlObject)obj).getObjRef() != null) {
+    //
+    // Object jsonValue = propertyAsJson( prop, value );
+    //
+    // OlProperty a = prop.info().getAnnotation( OlProperty.class );
+    // String propName = a != null ? a.value() : prop.info().getName();
+    // Object res = ((OlObject)obj).getAttribute( propName );
+    // } else {
+    // return super.doGet( obj, prop, value );
+    // }
+    // // }
+    // // return value;
+    // }
 
 
     /**

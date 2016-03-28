@@ -101,7 +101,7 @@ public class OlSessionHandler {
                     properties.remove( "event_src_obj" );
                     OlObject obj = getObject( objRef );
                     if (obj != null) {
-                        obj.handleEvent(new OlEvent( obj, method, properties ));
+                        obj.handleEvent( new OlEvent( obj, method, properties ) );
                     }
                 }
             }
@@ -115,10 +115,9 @@ public class OlSessionHandler {
         OlPlugin.registerResource( "resources/css/bootstrap-3.3.4.min.css", "css/bootstrap.css" );
         OlPlugin.registerResource( "resources/css/ol-3.7.0.css", "css/ol.css" );
 
-//        OlPlugin.registerResource( "resources/js/ol-3.7.0.debug.js", "js/ol.js" );
+        // OlPlugin.registerResource( "resources/js/ol-3.7.0.debug.js", "js/ol.js" );
         OlPlugin.registerResource( "resources/js/ol-3.7.0.js", "js/ol.js" );
-        OlPlugin.registerResource( "org/polymap/rap/openlayers/js/OlWrapper.js",
-                "js/OlWrapper.js" );
+        OlPlugin.registerResource( "org/polymap/rap/openlayers/js/OlWrapper.js", "js/OlWrapper.js" );
 
         JavaScriptLoader jsLoader = RWT.getClient().getService( JavaScriptLoader.class );
         jsLoader.require( OlPlugin.resourceLocation( "js/ol.js" ) );
@@ -131,43 +130,41 @@ public class OlSessionHandler {
     public void call( OlCommand command ) {
         callRemote( "call", command.getJson() );
     }
-//
-//    public void call( String method, JsonObject json ) {
-//        callRemote( method, json );
-//    }
+    //
+    // public void call( String method, JsonObject json ) {
+    // callRemote( method, json );
+    // }
 
 
-    void registerEventListener( OlObject src, String event, OlEventListener listener,
-            PayLoad payload ) {
+    void registerEventListener( OlObject src, String event, OlEventListener listener, PayLoad payload ) {
         Stringer payloadStringer = new Stringer();
         if (payload != null) {
-            payload.values().forEach(
-                    value -> payloadStringer.add( "result.", value.key(), " = ", value.value(), ";" ) );
+            payload.values()
+                    .forEach( value -> payloadStringer.add( "result.", value.key(), " = ", value.value(), ";" ) );
         }
-        // FIXME call OlMap.getProperties() would cause 'TypeError: cyclic object value'
+        // FIXME call OlMap.getProperties() would cause 'TypeError: cyclic object
+        // value'
         String command = null;
-        if(src instanceof OlMap) {
+        if (src instanceof OlMap) {
             command = "var result = {};";
-        } else {
-            command = new Stringer(
-                    "var result = that.objs['", src.getObjRef(), "'].getProperties();").toString();
+        }
+        else {
+            command = new Stringer( "var result = that.objs['", src.getObjRef(), "'].getProperties();" ).toString();
         }
         command = new Stringer(
                 // "console.log('", event, "');",
-                command ,
-                "result['event_src_obj'] = '" + src.getObjRef() + "';", payloadStringer,
+                command, "result['event_src_obj'] = '" + src.getObjRef() + "';", payloadStringer,
                 "rap.getRemoteObject(that).call( '", event, "', result);" ).toString();
-        callRemote( "addListener",
-                new JsonObject().add( "src", src.getObjRef() ).add( "code", command )
-                        .add( "event", event )
-                        .add( "hashCode", event + "_" + listener.hashCode() ) );
+        callRemote( "addListener", new JsonObject().add( "src", src.getObjRef() ).add( "code", command )
+                .add( "event", event ).add( "hashCode", event + "_" + listener.hashCode() ) );
     }
 
 
     void unregisterEventListener( OlObject src, String event, OlEventListener listener ) {
-        callRemote( "removeListener", new JsonObject().add( "src", src.getObjRef() )
-                .add( "hashCode", event + "_" + listener.hashCode() ) );
+        callRemote( "removeListener",
+                new JsonObject().add( "src", src.getObjRef() ).add( "hashCode", event + "_" + listener.hashCode() ) );
     }
+
 
     private class RemoteCall {
 

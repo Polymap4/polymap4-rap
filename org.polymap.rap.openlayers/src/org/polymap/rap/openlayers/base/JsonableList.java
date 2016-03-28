@@ -31,8 +31,8 @@ public class JsonableList<T extends Jsonable>
     @Override
     public Object toJson() {
         throw new RuntimeException( "not yet implementd" );
-//        JSONArray result = new JSONArray();
-//        forEach( elm -> OlPropertyConcern.propertyAsJson( elm ) );
+        // JSONArray result = new JSONArray();
+        // forEach( elm -> OlPropertyConcern.propertyAsJson( elm ) );
     }
-    
+
 }

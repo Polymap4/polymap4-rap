@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.10.0",
  org.polymap.core;bundle-version="4.0.0",
  org.polymap.rap.openlayers;bundle-version="2.0.0"
 Service-Component: OSGI-INF/contribution.xml
+Bundle-ClassPath: .

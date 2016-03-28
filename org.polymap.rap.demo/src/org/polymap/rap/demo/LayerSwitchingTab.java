@@ -39,7 +39,7 @@ import org.polymap.rap.openlayers.style.CircleStyle;
 import org.polymap.rap.openlayers.style.FillStyle;
 import org.polymap.rap.openlayers.style.Font;
 import org.polymap.rap.openlayers.style.StrokeStyle;
-import org.polymap.rap.openlayers.style.Style;
+import org.polymap.rap.openlayers.style.StyleContainer;
 import org.polymap.rap.openlayers.style.TextStyle;
 import org.polymap.rap.openlayers.types.Attribution;
 import org.polymap.rap.openlayers.types.Color;
@@ -55,28 +55,32 @@ import com.google.common.collect.Lists;
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  *
  */
-public class LayerSwitchingTab extends DemoTab {
+public class LayerSwitchingTab
+        extends DemoTab {
 
-    private VectorSource source;
+    private VectorSource   source;
 
-    private OlMap map;
+    private OlMap          map;
 
     private List<Layer<?>> layers;
 
+
     public LayerSwitchingTab() {
-        super("LayerMoving");
+        super( "LayerMoving" );
     }
 
-    private final static Log log = LogFactory.getLog(LayerSwitchingTab.class);
+    private final static Log log = LogFactory.getLog( LayerSwitchingTab.class );
+
 
     @Override
-    protected void createDemoControls(Composite parent) {
-        map = new OlMap(parent, SWT.MULTI | SWT.WRAP | SWT.BORDER,
-                new View().projection.put(new Projection("EPSG:3857", Units.m)).zoom.put(12).center
-                        .put(new Coordinate(1401845.7269824906, 6666952.61751981)));
+    protected void createDemoControls( Composite parent ) {
+        map = new OlMap( parent, SWT.MULTI | SWT.WRAP | SWT.BORDER,
+                new View().projection.put( new Projection( "EPSG:3857", Units.m ) ).zoom
+                        .put( 12 ).center
+                                .put( new Coordinate( 1401845.7269824906, 6666952.61751981 ) ) );
 
         layers = Lists.newArrayList();
-        layers.add(new TileLayer().source.put(new MapQuestSource(MapQuestSource.Type.osm)));
+        layers.add( new TileLayer().source.put( new MapQuestSource( MapQuestSource.Type.osm ) ) );
 
         // map.addLayer( new ImageLayer().source
         // .put( new ImageWMSSource().url.put(
@@ -85,57 +89,66 @@ public class LayerSwitchingTab extends DemoTab {
         // ).opacity
         // .put( 0.5f ) );
 
-        source = new VectorSource().format.put(new GeoJSONFormat()).attributions
-                .put(Arrays.asList(new Attribution("Steffen Stundzig")));
+        source = new VectorSource().format.put( new GeoJSONFormat() ).attributions
+                .put( Arrays.asList( new Attribution( "Steffen Stundzig" ) ) );
 
-        layers.add(new VectorLayer().style
-                .put(new Style().fill.put(new FillStyle().color.put(new Color(0, 0, 255, 0.1f))).stroke
-                        .put(new StrokeStyle().color.put(new Color("red")).width.put(1f))).source.put(source));
+        layers.add( new VectorLayer().style.put( new StyleContainer().fill
+                .put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke.put(
+                        new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
+                                .put( source ) );
         addFeatures();
 
-        layers.forEach(layer -> map.addLayer(layer));
+        layers.forEach( layer -> map.addLayer( layer ) );
     }
+
 
     private void addFeatures() {
-        OlFeature feature = new OlFeature();
-        feature.name.set("Point");
-        feature.labelPoint.set(map.view.get().center.get());
-        feature.geometry.set(new PointGeometry(map.view.get().center.get()));
-        feature.style.put(new Style().text.put(new TextStyle().text.put("MY MESSAGE").font
-                .put(new Font().family.put(Font.Family.CourierNew).weight.put(Font.Weight.bold).size.put(24)).stroke
-                        .put(new StrokeStyle().color.put(new Color("green")).width.put(2f))).image
-                                .put(new CircleStyle(5.0f).fill.put(new FillStyle().color.put(new Color("red")))));
+        OlFeature feature = new OlFeature( "Point" );
+        feature.name.set( "Point" );
+        feature.labelPoint.set( map.view.get().center.get() );
+        feature.geometry.set( new PointGeometry( map.view.get().center.get() ) );
+        feature.style.put( new StyleContainer().text.put( new TextStyle().text.put( "MY MESSAGE" ).font.put(
+                new Font().family.put( Font.Family.CourierNew ).weight.put( Font.Weight.bold ).size
+                        .put( 24 ) ).stroke
+                                .put( new StrokeStyle().color.put( new Color( "green" ) ).width
+                                        .put( 2f ) ) ).image
+                                                .put( new CircleStyle( 5.0f ).fill
+                                                        .put( new FillStyle().color
+                                                                .put( new Color( "red" ) ) ) ) );
 
-        OlFeature feature2 = new OlFeature();
-        feature2.name.set("Polygon");
-        feature2.labelPoint.set(map.view.get().center.get());
-        feature2.geometry.set(new PolygonGeometry(new Coordinate(-12393642.369994164, 9388521.61821717),
-                new Coordinate(-13351395.095766516, 7297102.400714279),
-                new Coordinate(-10888602.372351898, 7688021.880621362),
-                new Coordinate(-12393642.369994164, 9388521.61821717)));
-        feature2.style.put(new Style().fill.put(new FillStyle().color.put(new Color("red"))).stroke
-                .put(new StrokeStyle().color.put(new Color("blue")).width.put(10f)));
-        source.addFeatures(feature, feature2);
+        OlFeature feature2 = new OlFeature( "Polygon" );
+        feature2.name.set( "Polygon" );
+        feature2.labelPoint.set( map.view.get().center.get() );
+        feature2.geometry
+                .set( new PolygonGeometry( new Coordinate( -12393642.369994164, 9388521.61821717 ),
+                        new Coordinate( -13351395.095766516, 7297102.400714279 ),
+                        new Coordinate( -10888602.372351898, 7688021.880621362 ),
+                        new Coordinate( -12393642.369994164, 9388521.61821717 ) ) );
+        feature2.style.put(
+                new StyleContainer().fill.put( new FillStyle().color.put( new Color( "red" ) ) ).stroke.put(
+                        new StrokeStyle().color.put( new Color( "blue" ) ).width.put( 10f ) ) );
+        source.addFeatures( feature, feature2 );
     }
 
+
     @Override
-    protected void createStyleControls(Composite parent) {
-        Composite group = new Composite(parent, SWT.NONE);
-        group.setLayout(new GridLayout(2, false));
+    protected void createStyleControls( Composite parent ) {
+        Composite group = new Composite( parent, SWT.NONE );
+        group.setLayout( new GridLayout( 2, false ) );
 
-        new Label(group, SWT.NONE).setText("");
+        new Label( group, SWT.NONE ).setText( "" );
 
-        Button center = new Button(group, SWT.BORDER);
-        center.setText("Switch Layer order");
-        center.addSelectionListener(new SelectionAdapter() {
+        Button center = new Button( group, SWT.BORDER );
+        center.setText( "Switch Layer order" );
+        center.addSelectionListener( new SelectionAdapter() {
 
             @Override
-            public void widgetSelected(SelectionEvent e) {
-                layers.forEach(layer -> map.removeLayer(layer));
-                Collections.reverse(layers);
-                layers.forEach(layer -> map.addLayer(layer));
+            public void widgetSelected( SelectionEvent e ) {
+                layers.forEach( layer -> map.removeLayer( layer ) );
+                Collections.reverse( layers );
+                layers.forEach( layer -> map.addLayer( layer ) );
             }
-        });
+        } );
 
     }
 }

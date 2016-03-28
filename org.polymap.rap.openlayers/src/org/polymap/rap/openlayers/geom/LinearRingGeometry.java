@@ -23,17 +23,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.polymap.core.runtime.config.Concern;
+import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.core.runtime.config.Config2;
-
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.types.Coordinate;
 
 /**
  * Linear ring geometry. Only used as part of polygon; cannot be rendered on its own.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.geom.LinearRing.html">OpenLayers Doc</a>
+ * @see <a href="http://openlayers.org/en/master/apidoc/ol.geom.LinearRing.html">
+ *      OpenLayers Doc</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
 public class LinearRingGeometry
@@ -42,12 +42,13 @@ public class LinearRingGeometry
     @Immutable
     @Mandatory
     @Concern(OlPropertyConcern.class)
-    Config2<SimpleGeometry,List<Coordinate>> coordinates;
+    Config2<LinearRingGeometry,List<Coordinate>> coordinates;
 
 
     public LinearRingGeometry( Coordinate... coordinates ) {
         this( Arrays.asList( coordinates ) );
     }
+
 
     public LinearRingGeometry( List<Coordinate> coordinates ) {
         super( "ol.geom.LinearRing" );

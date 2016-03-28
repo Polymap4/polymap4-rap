@@ -18,9 +18,8 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 import org.polymap.core.runtime.config.Concern;
-import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.core.runtime.config.Config2;
-
+import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.source.VectorSource;
 import org.polymap.rap.openlayers.style.Style;
@@ -28,16 +27,17 @@ import org.polymap.rap.openlayers.style.Style;
 /**
  * Vector data that is rendered client-side.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.layer.Vector.html">OpenLayers Doc</a>
+ * @see <a href="http://openlayers.org/en/master/apidoc/ol.layer.Vector.html">
+ *      OpenLayers Doc</a>
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  */
-public class VectorLayer 
+public class VectorLayer
         extends Layer<VectorSource> {
 
     @Concern(OlPropertyConcern.class)
-    public Config2<VectorLayer,Style>     style;
-    
-    
+    public Config2<VectorLayer,Style> style;
+
+
     /**
      * Constructs a new instance.
      *
@@ -48,9 +48,9 @@ public class VectorLayer
         Arrays.asList( initializers ).forEach( initializer -> initializer.accept( this ) );
     }
 
-    
+
     protected VectorLayer( String jsClassname ) {
         super( jsClassname );
     }
-    
+
 }

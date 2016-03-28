@@ -14,17 +14,18 @@
  */
 package org.polymap.rap.openlayers.base;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.rap.json.JsonObject;
 import org.json.JSONArray;
 import org.polymap.core.runtime.config.Config;
 import org.polymap.core.runtime.config.ConfigurationFactory;
 import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
 import org.polymap.rap.openlayers.base.OlPropertyConcern.Unquoted;
+import org.polymap.rap.openlayers.types.Coordinate;
 import org.polymap.rap.openlayers.util.Stringer;
 
 /**
@@ -103,8 +104,7 @@ public abstract class OlObject {
 
 
     public void call( String code ) {
-        osh().call( new OlCommand(
-                new Stringer( "this.obj=", getJSObjRef(), "; ", code ).toString() ) );
+        osh().call( new OlCommand( new Stringer( "this.obj=", getJSObjRef(), "; ", code ).toString() ) );
     }
 
 
@@ -114,8 +114,7 @@ public abstract class OlObject {
      * @param function The name of the function.
      */
     public void call( String function, Object... args ) {
-        StringBuilder buf = new StringBuilder( 128 ).append( "this.obj." ).append( function )
-                .append( '(' );
+        StringBuilder buf = new StringBuilder( 128 ).append( "this.obj." ).append( function ).append( '(' );
 
         for (int i = 0; i < args.length; i++) {
             if (i > 0) {
@@ -157,6 +156,12 @@ public abstract class OlObject {
         if (arg instanceof JSONArray) {
             return ((JSONArray)arg).toString();
         }
+        if (arg instanceof Coordinate) {
+            return ((Coordinate)arg).toJson().toString();
+        }
+        if (arg instanceof Collection) {
+            return OlPropertyConcern.propertyAsJson( arg ).toString();
+        }
         throw new IllegalArgumentException( "Unknown arg type: " + arg.getClass() + ": " + arg );
     }
 
@@ -193,8 +198,7 @@ public abstract class OlObject {
     private Map<String,Set<OlEventListener>> eventListeners = new HashMap<String,Set<OlEventListener>>();
 
 
-    protected void addEventListener( final String event, OlEventListener listener,
-            PayLoad payload ) {
+    protected void addEventListener( final String event, OlEventListener listener, PayLoad payload ) {
         Set<OlEventListener> listeners = eventListeners.get( event );
         if (listeners == null) {
             listeners = new HashSet<OlEventListener>();

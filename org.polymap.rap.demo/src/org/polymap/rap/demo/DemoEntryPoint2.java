@@ -39,7 +39,7 @@ import org.polymap.rap.openlayers.source.VectorSource;
 import org.polymap.rap.openlayers.source.WMSRequestParams;
 import org.polymap.rap.openlayers.style.FillStyle;
 import org.polymap.rap.openlayers.style.StrokeStyle;
-import org.polymap.rap.openlayers.style.Style;
+import org.polymap.rap.openlayers.style.StyleContainer;
 import org.polymap.rap.openlayers.types.Attribution;
 import org.polymap.rap.openlayers.types.Color;
 import org.polymap.rap.openlayers.types.Coordinate;
@@ -128,7 +128,7 @@ public class DemoEntryPoint2
                 .getResourceManager().getLocation( "/polygon-samples.geojson" ) ).attributions
                 .put( Arrays.asList( new Attribution( "Steffen Stundzig" ) ) );
 
-        VectorLayer vector = new VectorLayer().style.put( new Style().fill
+        VectorLayer vector = new VectorLayer().style.put( new StyleContainer().fill
                 .put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke
                 .put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
                 .put( source );
@@ -180,7 +180,7 @@ public class DemoEntryPoint2
                 .getResourceManager().getLocation( "/polygon-samples.geojson" ) ).attributions
                 .put( Arrays.asList( new Attribution( "Steffen Stundzig" ) ) );
 
-        VectorLayer vector = new VectorLayer().style.put( new Style().fill
+        VectorLayer vector = new VectorLayer().style.put( new StyleContainer().fill
                 .put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke
                 .put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
                 .put( source );

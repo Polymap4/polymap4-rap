@@ -43,8 +43,8 @@ public class ClickControlTab
 
         map.addEventListener(OlMap.Event.click, event -> {
             JsonObject json = event.properties();
-            JsonArray pixel = (JsonArray) json.get( "feature.pixel" );
-            JsonArray coordinate = (JsonArray) json.get( "feature.coordinate" );
+            JsonArray pixel = (JsonArray) json.get( "feature").asObject().get( "pixel" );
+            JsonArray coordinate = (JsonArray) json.get( "feature").asObject().get( "coordinate" );
             StatusBar.getInstance().addInfo( parent, String.format( "%s - pixel clicked: (x=%s, y=%s) => coordinate=(x=%s, y=%s)", 
                     name(), pixel.get( 0 ), pixel.get( 1 ), coordinate.get( 0 ), coordinate.get( 1 )));
         });

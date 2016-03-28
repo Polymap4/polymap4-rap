@@ -23,16 +23,13 @@ import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.rap.rwt.client.service.BrowserNavigation;
 import org.eclipse.rap.rwt.service.ServerPushSession;
-import org.eclipse.rap.rwt.widgets.ClusteredSynchronizer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -44,13 +41,13 @@ import org.eclipse.swt.widgets.TreeItem;
 public class DemoEntryPoint
         extends AbstractEntryPoint {
 
-    private final static Log log = LogFactory.getLog( DemoEntryPoint2.class );
+    private final static Log        log         = LogFactory.getLog( DemoEntryPoint2.class );
 
-    // final ServerPushSession pushSession = new ServerPushSession();
+    private final ServerPushSession pushSession = new ServerPushSession();
 
-    private Tree             menu;
+    private Tree                    menu;
 
-    private Composite        content;
+    private Composite               content;
 
 
     //
@@ -58,10 +55,10 @@ public class DemoEntryPoint
 
     @Override
     protected void createContents( Composite parent ) {
-        // pushSession.start();
-        // parent.addDisposeListener( e -> {
-        // pushSession.stop();
-        // } );
+        pushSession.start();
+        parent.addDisposeListener( e -> {
+            pushSession.stop();
+        } );
         parent.setLayout( new GridLayout( 2, false ) );
         Color backgroundColor = new Color( parent.getDisplay(), 0x31, 0x61, 0x9C );
         Composite header = new Composite( parent, SWT.NONE );
@@ -82,7 +79,8 @@ public class DemoEntryPoint
 
         StatusBar status = StatusBar.getInstance().create( parent, SWT.NONE );
         status.addInfo( parent, "Polymap RAP Openlayers Demo started..." );
-        // status.setLayoutData( new GridData( SWT.FILL, SWT.NONE, true, false, 2, 1
+        // status.setLayoutData( new GridData( SWT.FILL, SWT.NONE, true, false,
+        // 2, 1
         // ) );
         status.setLayoutData( new GridData( SWT.FILL, SWT.NONE, true, false, 2, 1 ) );
 
@@ -126,9 +124,9 @@ public class DemoEntryPoint
 
 
     private static DemoTab[] createExampleTabs() {
-        return new DemoTab[] { new ClickControlTab(), new DrawInteractionTab(), 
-                new ExtentTab(), new FeatureVectorTab(), new ResolutionsTab(), 
-                new SelectInteractionTab(), new ScaleLineControlTab(), 
-                new ZoomControlTab(), new ZoomSliderControlTab() };
+        return new DemoTab[] { new ClickControlTab(), new DrawInteractionTab(), new ExtentTab(),
+                new FeatureVectorTab(), new GraphInteractionTab(), new ResolutionsTab(),
+                new SelectInteractionTab(), new ScaleLineControlTab(), new ZoomControlTab(),
+                new ZoomSliderControlTab() };
     }
 }
