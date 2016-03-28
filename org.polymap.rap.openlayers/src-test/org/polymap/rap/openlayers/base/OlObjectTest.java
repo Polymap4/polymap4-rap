@@ -4,15 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
 
-import org.eclipse.rap.json.JsonObject;
 import org.json.JSONArray;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
 import org.polymap.rap.openlayers.base.OlPropertyConcern.Unquoted;
 import org.polymap.rap.openlayers.view.View;
@@ -212,7 +208,7 @@ public class OlObjectTest
         verify( osh ).registerEventListener( ol, "event", listener, payload );
 
         OlEvent event = new OlEvent( ol, "event", null );
-        assertEquals( ol, event.src() );
+        assertEquals( ol, event.getSource() );
         assertEquals( "event", event.name() );
         assertNull( event.properties() );
 

@@ -68,7 +68,10 @@ public class ScaleLineControl
         units
     }
 
-
+    /**
+     * @param event
+     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+     */
     public void addEventListener( Event event, OlEventListener listener ) {
         addEventListener( "change:" + event.name(), listener, null );
     }

@@ -75,9 +75,8 @@ public class LayerSwitchingTab
     @Override
     protected void createDemoControls( Composite parent ) {
         map = new OlMap( parent, SWT.MULTI | SWT.WRAP | SWT.BORDER,
-                new View().projection.put( new Projection( "EPSG:3857", Units.m ) ).zoom
-                        .put( 12 ).center
-                                .put( new Coordinate( 1401845.7269824906, 6666952.61751981 ) ) );
+                new View().projection.put( new Projection( "EPSG:3857", Units.m ) ).zoom.put( 12 ).center
+                        .put( new Coordinate( 1401845.7269824906, 6666952.61751981 ) ) );
 
         layers = Lists.newArrayList();
         layers.add( new TileLayer().source.put( new MapQuestSource( MapQuestSource.Type.osm ) ) );
@@ -92,9 +91,9 @@ public class LayerSwitchingTab
         source = new VectorSource().format.put( new GeoJSONFormat() ).attributions
                 .put( Arrays.asList( new Attribution( "Steffen Stundzig" ) ) );
 
-        layers.add( new VectorLayer().style.put( new StyleContainer().fill
-                .put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke.put(
-                        new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
+        layers.add( new VectorLayer().style
+                .put( new StyleContainer().fill.put( new FillStyle().color.put( new Color( 0, 0, 255, 0.1f ) ) ).stroke
+                        .put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
                                 .put( source ) );
         addFeatures();
 
@@ -108,25 +107,19 @@ public class LayerSwitchingTab
         feature.labelPoint.set( map.view.get().center.get() );
         feature.geometry.set( new PointGeometry( map.view.get().center.get() ) );
         feature.style.put( new StyleContainer().text.put( new TextStyle().text.put( "MY MESSAGE" ).font.put(
-                new Font().family.put( Font.Family.CourierNew ).weight.put( Font.Weight.bold ).size
-                        .put( 24 ) ).stroke
-                                .put( new StrokeStyle().color.put( new Color( "green" ) ).width
-                                        .put( 2f ) ) ).image
-                                                .put( new CircleStyle( 5.0f ).fill
-                                                        .put( new FillStyle().color
-                                                                .put( new Color( "red" ) ) ) ) );
+                new Font().family.put( Font.Family.CourierNew ).weight.put( Font.Weight.bold ).size.put( 24 ) ).stroke
+                        .put( new StrokeStyle().color.put( new Color( "green" ) ).width.put( 2f ) ) ).image.put(
+                                new CircleStyle( 5.0f ).fill.put( new FillStyle().color.put( new Color( "red" ) ) ) ) );
 
         OlFeature feature2 = new OlFeature( "Polygon" );
         feature2.name.set( "Polygon" );
         feature2.labelPoint.set( map.view.get().center.get() );
-        feature2.geometry
-                .set( new PolygonGeometry( new Coordinate( -12393642.369994164, 9388521.61821717 ),
-                        new Coordinate( -13351395.095766516, 7297102.400714279 ),
-                        new Coordinate( -10888602.372351898, 7688021.880621362 ),
-                        new Coordinate( -12393642.369994164, 9388521.61821717 ) ) );
-        feature2.style.put(
-                new StyleContainer().fill.put( new FillStyle().color.put( new Color( "red" ) ) ).stroke.put(
-                        new StrokeStyle().color.put( new Color( "blue" ) ).width.put( 10f ) ) );
+        feature2.geometry.set( new PolygonGeometry( new Coordinate( -12393642.369994164, 9388521.61821717 ),
+                new Coordinate( -13351395.095766516, 7297102.400714279 ),
+                new Coordinate( -10888602.372351898, 7688021.880621362 ),
+                new Coordinate( -12393642.369994164, 9388521.61821717 ) ) );
+        feature2.style.put( new StyleContainer().fill.put( new FillStyle().color.put( new Color( "red" ) ) ).stroke
+                .put( new StrokeStyle().color.put( new Color( "blue" ) ).width.put( 10f ) ) );
         source.addFeatures( feature, feature2 );
     }
 
@@ -149,6 +142,5 @@ public class LayerSwitchingTab
                 layers.forEach( layer -> map.addLayer( layer ) );
             }
         } );
-
     }
 }
