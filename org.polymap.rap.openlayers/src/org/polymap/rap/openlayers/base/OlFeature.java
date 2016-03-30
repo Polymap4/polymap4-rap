@@ -22,10 +22,26 @@ import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
 import org.polymap.rap.openlayers.geom.Geometry;
-import org.polymap.rap.openlayers.style.Style;
+import org.polymap.rap.openlayers.style.Base;
 import org.polymap.rap.openlayers.types.Coordinate;
 
 /**
+ * A vector object for geographic features with a geometry and other attribute
+ * properties, similar to the features in vector file formats like GeoJSON.
+ * 
+ * Features can be styled individually with setStyle; otherwise they use the style of
+ * their vector layer.
+ * 
+ * Note that attribute properties are set as ol.Object properties on the feature
+ * object, so they are observable, and have get/set accessors.
+ * 
+ * Typically, a feature has a single geometry property. You can set the geometry
+ * using the setGeometry method and get it with getGeometry. It is possible to store
+ * more than one geometry on a feature using attribute properties. By default, the
+ * geometry used for rendering is identified by the property name geometry. If you
+ * want to use another geometry property for rendering, use the setGeometryName
+ * method to change the attribute property associated with the geometry for the
+ * feature.
  * 
  * @see <a href="http://openlayers.org/en/master/apidoc/ol.Feature.html">OpenLayers
  *      Doc</a>
@@ -45,10 +61,10 @@ public class OlFeature
     @Concern(OlPropertyConcern.class)
     public Config2<OlFeature,Coordinate> labelPoint;
 
-    @Immutable
+//    @Immutable
     @Concern(OlPropertyConcern.class)
     @OlSetter("setStyle")
-    public Config2<OlFeature,Style>      style;
+    public Config2<OlFeature,Base>       style;
 
     @Immutable
     @Concern(OlPropertyConcern.class)
@@ -69,7 +85,8 @@ public class OlFeature
     public OlFeature() {
         this( null, null );
     }
-    
+
+
     public OlFeature( String id ) {
         this( id, null );
     }

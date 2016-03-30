@@ -1,7 +1,6 @@
 /*
- * polymap.org 
- * Copyright (C) 2016 individual contributors as indicated by the @authors tag. 
- * All rights reserved.
+ * polymap.org Copyright (C) 2016 individual contributors as indicated by
+ * the @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -18,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.widgets.Display;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -51,6 +52,8 @@ import com.google.common.collect.Maps;
  */
 public class OlFeatureGraph
         extends SinkAdapter {
+
+    private final static Log            log             = LogFactory.getLog( OlFeatureGraph.class );
 
     private static final double         GRAPHUNIT2COORD = 10000.0;
 
@@ -133,23 +136,37 @@ public class OlFeatureGraph
      * If an edge is added twice, than the weight of both are added.
      * 
      * The id of the edge is constructed with src.id + "_" + target.id
-     * 
-     * @param src
-     * @param target
-     * @param style
-     * @param weight
      */
-    public void addOrUpdateEdge( final OlFeature src, final OlFeature target, final Style style, int weight ) {
+    public void addOrUpdateEdge( final OlFeature src, final OlFeature target,
+            final Style style, int weight ) {
         final String edgeId = src.id.get() + "_" + target.id.get();
         OlFeature line = edges.get( edgeId );
         if (line == null) {
             line = new OlFeature( edgeId );
-            line.geometry.set( new LineStringGeometry( ((PointGeometry)src.geometry.get()).coordinate.get(),
+        }
+        line.style.put( style );
+        addOrUpdateEdge( line, src, target, weight );
+    }
+
+
+    /**
+     * Creates or updates a predefined edge between both features with the specified
+     * weight.
+     * 
+     * If an edge is added twice, than the weight of both are added.
+     * 
+     * <strong>The ID of the edge must be build with src.id + '_' +
+     * target.id.</strong>
+     */
+    public void addOrUpdateEdge( final OlFeature edge, final OlFeature src,
+            final OlFeature target, int weight ) {
+        final String edgeId = edge.id.get();
+        if (!edges.containsKey( edgeId )) {
+            edge.geometry.set( new LineStringGeometry( ((PointGeometry)src.geometry.get()).coordinate.get(),
                     ((PointGeometry)target.geometry.get()).coordinate.get() ) );
-            line.style.put( style );
-            edges.put( edgeId, line );
+            edges.put( edgeId, edge );
             getInternalGraph().addEdge( edgeId, src.id.get(), target.id.get() );
-            vector.addFeature( line );
+            vector.addFeature( edge );
             getInternalGraph().getEdge( edgeId ).addAttribute( "layout.weight", weight );
         }
         else {
@@ -167,28 +184,34 @@ public class OlFeatureGraph
                                                    // //new
                                                    // SpringBox( false );//
                                                    // LinLog(false);//.newLayoutAlgorithm();
+//            layout.setStabilizationLimit( 0.8d );
             viewer.enableAutoLayout( layout );
             final Display display = Display.getCurrent();
             Executors.newSingleThreadExecutor().execute( () -> {
-                readCoordinates( viewer, display );
+                readCoordinates( viewer, layout, display, 50 );
             } );
         }
         return graph;
     }
 
-    private Map<String,List<Double>> nodeCoordinates;
+    private Map<String,List<Double>> nodeCoordinates = Maps.newHashMap();
 
 
-    private void readCoordinates( Viewer viewer, Display display ) {
+    private void readCoordinates( final Viewer viewer, final Layout layout, final Display display, final int maxSteps ) {
         final ProxyPipe pipe = viewer.newViewerPipe();
         pipe.addAttributeSink( this );
+        // boolean firstRun = true;
         // layout.addAttributeSink( this );
         try {
-            while (true) {
-                nodeCoordinates = Maps.newHashMap();
-                pipe.blockingPump();
+            while (true && layout.getStabilization() <= layout.getStabilizationLimit()/* && layout.getSteps() <= maxSteps*/) {
+                log.info( "step:quality:stabilization" + layout.getSteps() + ":" + layout.getQuality() + ":" + layout.getStabilization() );
+                nodeCoordinates.clear();
+                pipe.pump();
+                final Map<String,List<Double>> finalNodeCoordinates = Maps.newHashMap( nodeCoordinates );
+                // final boolean finalFirstRun = firstRun;
                 display.asyncExec( () -> {
-                    nodeCoordinates.entrySet().forEach( entry -> {
+                    log.info( "sending coordinates" );
+                    finalNodeCoordinates.entrySet().forEach( entry -> {
                         Coordinate newCoordinate = new Coordinate( entry.getValue().get( 0 ) * GRAPHUNIT2COORD,
                                 entry.getValue().get( 1 ) * GRAPHUNIT2COORD );
                         final OlFeature olFeature = nodes.get( entry.getKey() );
@@ -202,15 +225,21 @@ public class OlFeatureGraph
                             geometry.coordinates.set( coordinates );
                         } );
                     } );
-                    // reset the map view to the max extent of the required drawing
-                    // area
-                    Point3 max = viewer.getGraphicGraph().getMaxPos();
-                    Point3 min = viewer.getGraphicGraph().getMinPos();
-                    Extent envelope = new Extent( min.x * GRAPHUNIT2COORD, min.y * GRAPHUNIT2COORD,
-                            max.x * GRAPHUNIT2COORD, max.y * GRAPHUNIT2COORD );
-                    map.view.get().fit( envelope, null );
+//                    if (layout.getSteps() <= 5) {
+                        // reset the map view to the max extent of the required
+                        // drawing
+                        // area
+                        Point3 max = viewer.getGraphicGraph().getMaxPos();
+                        Point3 min = viewer.getGraphicGraph().getMinPos();
+                        Extent envelope = new Extent( min.x * GRAPHUNIT2COORD, min.y * GRAPHUNIT2COORD,
+                                max.x * GRAPHUNIT2COORD, max.y * GRAPHUNIT2COORD );
+                        map.view.get().fit( envelope, null );
+                        log.info( "setting extent to " + envelope.toJson() );
+//                    }
+                    log.info( "sending coordinates done." );
                 } );
-                Thread.currentThread().sleep( 100 );
+                Thread.currentThread().sleep( 1000 );
+                // firstRun = false;
             }
         }
         catch (Exception e) {
