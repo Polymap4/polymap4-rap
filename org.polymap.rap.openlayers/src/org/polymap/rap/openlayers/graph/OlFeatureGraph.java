@@ -215,15 +215,15 @@ public class OlFeatureGraph
                         Coordinate newCoordinate = new Coordinate( entry.getValue().get( 0 ) * GRAPHUNIT2COORD,
                                 entry.getValue().get( 1 ) * GRAPHUNIT2COORD );
                         final OlFeature olFeature = nodes.get( entry.getKey() );
-                        ((PointGeometry)olFeature.geometry.get()).coordinate.set( newCoordinate );
-                        Node node = getInternalGraph().getNode( entry.getKey() );
-                        node.getEachEdge().forEach( edge -> {
-                            OlFeature line = edges.get( edge.getId() );
-                            LineStringGeometry geometry = ((LineStringGeometry)line.geometry.get());
-                            List<Coordinate> coordinates = geometry.coordinates.get();
-                            coordinates.set( (edge.getId().startsWith( node.getId() )) ? 0 : 1, newCoordinate );
-                            geometry.coordinates.set( coordinates );
-                        } );
+//                        ((PointGeometry)olFeature.geometry.get()).coordinate.set( newCoordinate );
+//                        Node node = getInternalGraph().getNode( entry.getKey() );
+//                        node.getEachEdge().forEach( edge -> {
+//                            OlFeature line = edges.get( edge.getId() );
+//                            LineStringGeometry geometry = ((LineStringGeometry)line.geometry.get());
+//                            List<Coordinate> coordinates = geometry.coordinates.get();
+//                            coordinates.set( (edge.getId().startsWith( node.getId() )) ? 0 : 1, newCoordinate );
+//                            geometry.coordinates.set( coordinates );
+//                        } );
                     } );
 //                    if (layout.getSteps() <= 5) {
                         // reset the map view to the max extent of the required
