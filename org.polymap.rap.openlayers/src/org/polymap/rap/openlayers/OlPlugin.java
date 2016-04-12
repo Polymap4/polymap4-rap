@@ -42,7 +42,6 @@ public class OlPlugin
         return plugin;
     }
 
-    // instance *******************************************
 
     public void start( final BundleContext context ) throws Exception {
         super.start( context );
