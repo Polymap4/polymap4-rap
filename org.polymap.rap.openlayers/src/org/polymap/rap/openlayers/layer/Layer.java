@@ -50,8 +50,16 @@ public abstract class Layer<S extends Source>
     }
 
 
+    /**
+     * Refresh this layer by re-fetching data from the server.
+     */
     public void refresh() {
-        // does not work
-        call( "changed", new Object[0] );
+        // adding the param t to the URL (of the image) causes the browser
+        // to re-fetch it, bypassing all local and intermediate caches
+        call( "var source = this.obj.getSource();" + 
+                "var params = source.getParams();" +
+                "params.t = new Date().getMilliseconds();" +
+                "source.updateParams(params);" );
     }
+    
 }
