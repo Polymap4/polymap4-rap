@@ -48,4 +48,10 @@ public abstract class Layer<S extends Source>
     protected Layer( String jsClassname ) {
         super( jsClassname );
     }
+
+
+    public void refresh() {
+        // does not work
+        call( "changed", new Object[0] );
+    }
 }
