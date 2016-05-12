@@ -152,6 +152,9 @@ public abstract class OlObject {
         if (arg instanceof JSONArray) {
             return ((JSONArray)arg).toString();
         }
+        if (arg instanceof Jsonable) {
+            return ((Jsonable)arg).toJson().toString();
+        }
         if (arg instanceof Coordinate) {
             return ((Coordinate)arg).toJson().toString();
         }

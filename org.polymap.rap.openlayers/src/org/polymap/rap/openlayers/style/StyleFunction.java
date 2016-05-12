@@ -42,7 +42,7 @@ public class StyleFunction
 
     @Override
     public Object toJson() {
-        return "function(feature, resolution) { " + function + "}";
+        return "function(feature) { " + function + "}";
     }
 
 }

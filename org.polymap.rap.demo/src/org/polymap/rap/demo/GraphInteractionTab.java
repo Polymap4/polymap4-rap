@@ -29,6 +29,7 @@ import org.polymap.rap.openlayers.base.OlFeature;
 import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.control.ZoomSliderControl;
 import org.polymap.rap.openlayers.format.GeoJSONFormat;
+import org.polymap.rap.openlayers.graph.OlFeatureGephiGraph;
 import org.polymap.rap.openlayers.graph.OlFeatureGraph;
 import org.polymap.rap.openlayers.interaction.SelectInteraction;
 import org.polymap.rap.openlayers.layer.VectorLayer;
@@ -85,6 +86,9 @@ public class GraphInteractionTab
         map.addInteraction( selectInteraction );
         selectInteraction.addEventListener( SelectInteraction.Event.select, event -> StatusBar.getInstance()
                 .addInfo( parent, "Selected: " + event.properties().get( "selected" ).toString() ) );
+        map.view.get().addPropertyChangeListener( event -> {
+            log.info( "event: " + event.properties().toString() );
+        } );
     }
 
 
@@ -99,18 +103,18 @@ public class GraphInteractionTab
         center.setText( "Add Features" );
         center.addSelectionListener( new SelectionAdapter() {
 
-            private final OlFeatureGraph olFeatureGraph = new OlFeatureGraph( source, map );
+            private final OlFeatureGephiGraph olFeatureGraph = new OlFeatureGephiGraph( source, map );
 
-            private final Style nodeStyle      = new Style().zIndex.put( 0f ).image
+            private final Style               nodeStyle      = new Style().zIndex.put( 0f ).image
                     .put( new CircleStyle( 5.0f ).fill.put( new FillStyle().color.put( new Color( "red" ) ) ) );
 
-            private int                  click          = 0;
+            private int                       click          = 0;
 
-            private final OlFeature      masterFeature  = new OlFeature( "P1" );
+            private final OlFeature           masterFeature  = new OlFeature( "P1" );
 
-            private final OlFeature      masterFeature2 = new OlFeature( "P2" );
+            private final OlFeature           masterFeature2 = new OlFeature( "P2" );
 
-            private boolean              odd            = true;
+            private boolean                   odd            = true;
 
 
             @Override
@@ -140,6 +144,7 @@ public class GraphInteractionTab
                         odd = true;
                     }
                 }
+                olFeatureGraph.reload();
             }
         } );
     }
