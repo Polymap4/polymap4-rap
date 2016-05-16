@@ -42,7 +42,7 @@ public class OlPropertyConcern
 
 
     @Override
-    public Object doSet( Object obj, Config<Object> prop, Object value ) {
+    public synchronized Object doSet( Object obj, Config<Object> prop, Object value ) {
         //log.info( obj.getClass().getSimpleName() + "." + prop.info().getName() + " = " + value );
 
         OlSetter setterAnnotation = prop.info().getAnnotation( OlSetter.class );
