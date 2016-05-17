@@ -135,8 +135,12 @@ public class VectorSource
 
 
     public void removeFeature( OlFeature feature ) {
-        Stringer command = new Stringer( "this.obj.removeFeatures(", feature.getJSObjRef(), ");" );
+        Stringer command = new Stringer( "this.obj.removeFeature(", feature.getJSObjRef(), ");" );
         call( command.toString() );
+    }
+
+    public void clear() {
+        call( "this.obj.clear(true);");
     }
 
 }
