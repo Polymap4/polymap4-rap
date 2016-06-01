@@ -235,7 +235,7 @@ public class OlMap
 
 
     private void update() {
-        call( "this.obj.updateSize();" );
+        call( "var that = this.obj; setTimeout( function() { that.updateSize();}, 10);" );
     }
 
 
