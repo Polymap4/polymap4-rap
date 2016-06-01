@@ -47,8 +47,9 @@ public interface OlEventListener {
         private final List<Value> values = new ArrayList<Value>();
 
 
-        public void add( String key, String value ) {
+        public PayLoad add( String key, String value ) {
             values.add( new Value( key, value ) );
+            return this;
         }
 
 

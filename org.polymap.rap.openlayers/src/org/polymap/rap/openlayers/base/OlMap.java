@@ -106,16 +106,23 @@ public class OlMap
 
             @Override
             protected void layout( Composite composite, boolean flushCache ) {
+//                log.info( "layout " + composite + ", " + flushCache );
                 update();
             }
 
 
             @Override
             protected Point computeSize( Composite composite, int wHint, int hHint, boolean flushCache ) {
-                return new Point( wHint, hHint );
+//                log.info( "computeSize " + composite + ", " + wHint + ", " + ", " + hHint + flushCache );
+                return new Point( 1, 1 );
             }
         } );
         this.target.set( new Unquoted( "this.createDiv('" + WidgetUtil.getId( widget ) + "')" ) );
+//        call( "this.obj.on('propertychange', function() {console.log('propertychange on map');})" );
+//        addEventListener( "propertychange", event -> {
+//            log.info( event.properties() );
+//        }, new PayLoad().add( "event", "{}" ).add( "event.key", "theEvent.key" ).add( "event.value", "theEvent.newValue" ).add( "event.oldValue", "theEvent.target.get(theEvent.key)" ) );
+
     }
 
 
@@ -215,14 +222,14 @@ public class OlMap
             payload = new PayLoad();
             payload.add( "feature", "{}" );
             payload.add( "feature.pixel", "theEvent.pixel" );
-            payload.add( "feature.coordinate",
-                    "that.objs['" + getObjRef() + "'].getCoordinateFromPixel(theEvent.pixel)" );
+            payload.add( "feature.coordinate", "that.objs['" + getObjRef()
+                    + "'].getCoordinateFromPixel(theEvent.pixel)" );
         }
         else if (event == Event.boxstart || event == Event.boxend) {
             payload = new PayLoad();
             payload.add( "feature", "{}" );
-            payload.add( "feature.pixel",
-                    "that.objs['" + getObjRef() + "'].getPixelFromCoordinate(theEvent.coordinate)" );
+            payload.add( "feature.pixel", "that.objs['" + getObjRef()
+                    + "'].getPixelFromCoordinate(theEvent.coordinate)" );
             payload.add( "feature.coordinate", "theEvent.coordinate" );
         }
         addEventListener( event.getEventName(), listener, payload );

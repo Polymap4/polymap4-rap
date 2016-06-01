@@ -202,7 +202,7 @@ public abstract class OlObject {
      */
     protected void addEventListener( final String event, OlEventListener listener, PayLoad payload ) {
         EventManager.instance().subscribe( listener,
-                ev -> ev instanceof OlEvent && ((OlEvent)ev).name().equals( event ) );
+                ev -> ev instanceof OlEvent && ((OlEvent)ev).name().equals( event ) && ((OlEvent)ev).getSource().equals( this ) );
         osh().registerEventListener( this, event, listener, payload );
     }
 
