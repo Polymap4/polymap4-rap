@@ -22,9 +22,8 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.polymap.rap.openlayers.base.OlMap;
-import org.polymap.rap.openlayers.layer.ImageLayer;
-import org.polymap.rap.openlayers.source.ImageWMSSource;
-import org.polymap.rap.openlayers.source.WMSRequestParams;
+import org.polymap.rap.openlayers.layer.TileLayer;
+import org.polymap.rap.openlayers.source.MapQuestSource;
 import org.polymap.rap.openlayers.types.Coordinate;
 import org.polymap.rap.openlayers.types.Projection;
 import org.polymap.rap.openlayers.types.Projection.Units;
@@ -108,12 +107,13 @@ public abstract class DemoTab {
                 new View().projection.put(new Projection("EPSG:3857", Units.m)).zoom.put(12).center
                         .put(new Coordinate(1401845.7269824906, 6666952.61751981)));
 
-        // map.addLayer( new TileLayer().source.put( new MapQuestSource(
-        // MapQuestSource.Type.osm ) ) );
+         map.addLayer( new TileLayer().source.put( new MapQuestSource(
+         MapQuestSource.Type.osm ) ) );
 
-        map.addLayer(
-                new ImageLayer().source.put(new ImageWMSSource().url.put("http://ows.terrestris.de/osm/service/").params
-                        .put(new WMSRequestParams().layers.put("OSM-WMS"))).opacity.put(0.5f));
+        // map.addLayer(
+        // new ImageLayer().source.put(new
+        // ImageWMSSource().url.put("http://ows.terrestris.de/osm/service/").params
+        // .put(new WMSRequestParams().layers.put("OSM-WMS"))).opacity.put(0.5f));
 
         map.view.get().addPropertyChangeListener(event -> {
             StatusBar.getInstance().addInfo(parent, name() + ": " + event.properties().toString());

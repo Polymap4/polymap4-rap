@@ -41,13 +41,13 @@ import org.eclipse.swt.widgets.TreeItem;
 public class DemoEntryPoint
         extends AbstractEntryPoint {
 
-    private final static Log        log         = LogFactory.getLog( DemoEntryPoint2.class );
+    private final static Log log = LogFactory.getLog( DemoEntryPoint2.class );
 
     private final ServerPushSession pushSession = new ServerPushSession();
 
-    private Tree                    menu;
+    private Tree menu;
 
-    private Composite               content;
+    private Composite content;
 
 
     //
@@ -125,7 +125,7 @@ public class DemoEntryPoint
 
     private static DemoTab[] createExampleTabs() {
         return new DemoTab[] { new ClickControlTab(), new ClusterTab(), new DrawInteractionTab(), new ExtentTab(),
-                new FeatureVectorTab(), new ResolutionsTab(), new SelectInteractionTab(),
+                new LayerSwitchingTab(), new FeatureVectorTab(), new ResolutionsTab(), new SelectInteractionTab(),
                 new ScaleLineControlTab(), new ZoomControlTab(), new ZoomSliderControlTab() };
     }
 }

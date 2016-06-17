@@ -97,12 +97,24 @@ public class ImageWMSSource
 
     @Override
     public void onSetMap( OlMap map ) {
+        call( "this.objs['" + getObjRef() + "_keys'] = [];");
         call( "var progress=this.objs['" + WidgetUtil.getId( map.getControl() )
-                + "p']; this.obj.on('imageloadstart', function() { progress.addLoading();});" );
+                + "p']; this.objs['" + getObjRef() + "_keys'].push( this.obj.on('imageloadstart', function() { progress.addLoading();}).key);" );
         call( "var progress=this.objs['" + WidgetUtil.getId( map.getControl() )
-                + "p'];this.obj.on('imageloadend', function() { progress.addLoaded();});" );
+                + "p']; this.objs['" + getObjRef() + "_keys'].push(this.obj.on('imageloadend', function() { progress.addLoaded();}).key);" );
         call( "var progress=this.objs['" + WidgetUtil.getId( map.getControl() )
-                + "p'];this.obj.on('imageloaderror', function() { progress.addLoaded();});" );
+                + "p']; this.objs['" + getObjRef() + "_keys'].push(this.obj.on('imageloaderror', function() { progress.addLoaded();}).key);" );
+        //call( "console.log(this.objs['" + getObjRef() + "_keys']);");
         super.onSetMap( map );
+    }
+    
+    
+    @Override
+    public void onUnsetMap( OlMap map ) {
+        //call( "console.log(this.objs['" + getObjRef() + "_keys']);");
+        call( "var index; for( index in this.objs['" + getObjRef() + "_keys']) { var key = this.objs['" + getObjRef() + "_keys'][index]; this.obj.unByKey(key);/*console.log('deleted: ' + key);*/};");
+        call( "delete this.objs['" + getObjRef() + "_keys'];");
+        //call( "console.log(this.objs['" + getObjRef() + "_keys']);");
+        super.onUnsetMap( map );
     }
 }

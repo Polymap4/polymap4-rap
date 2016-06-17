@@ -187,11 +187,14 @@ public abstract class OlObject {
 
 
     public void dispose() {
-        // TODO remove also all controls and other stuff of this map
         osh().remove( getObjRef() );
-        call( getJSObjRef() + "=null;" );
+        call( "delete " + getJSObjRef() + ";" );
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        dispose();
+    }
 
     /**
      * 

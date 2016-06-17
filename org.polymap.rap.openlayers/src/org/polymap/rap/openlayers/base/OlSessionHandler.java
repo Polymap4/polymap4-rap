@@ -18,6 +18,7 @@
  */
 package org.polymap.rap.openlayers.base;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +55,7 @@ public class OlSessionHandler {
      * HashMap to hold references to created objects as value with the client side id
      * as key
      */
-    private Map<String,OlObject> ref2obj;
+    private Map<String,WeakReference<OlObject>> ref2obj;
 
     public Vector<OlCommand>     cmdsBeforeRemoteWasPresent;
 
@@ -68,7 +69,8 @@ public class OlSessionHandler {
 
 
     private OlSessionHandler() {
-        ref2obj = new HashMap<String,OlObject>();
+        // weakhashmap doesnt work as expected here
+        ref2obj = new HashMap<String,WeakReference<OlObject>>();
         cmdsBeforeRemoteWasPresent = new Vector<OlCommand>();
 
         Connection connection = RWT.getUISession().getConnection();
@@ -186,7 +188,7 @@ public class OlSessionHandler {
 
     void callRemote( String method, JsonObject json ) {
         if (isRendered) {
-            log.info( "callRemote: " + method + " with " + json.toString().replaceAll( "\\\\\"", "'" ) );
+            log.debug( "callRemote: " + method + " with " + json.toString().replaceAll( "\\\\\"", "'" ) );
             remote.call( method, json );
         }
         else {
@@ -202,7 +204,7 @@ public class OlSessionHandler {
 
     public synchronized String generateReference( OlObject src ) {
         String newRef = "ol" + referenceCounter++;
-        if (ref2obj.put( newRef, src ) != null) {
+        if (ref2obj.put( newRef, new WeakReference(src) ) != null) {
             throw new IllegalStateException( "objRef already added: " + newRef );
         }
         return newRef;
@@ -210,7 +212,8 @@ public class OlSessionHandler {
 
 
     public OlObject getObject( String objRef ) {
-        return ref2obj.get( objRef );
+         WeakReference<OlObject> reference = ref2obj.get( objRef );
+         return reference != null ? reference.get() : null;
     }
 
 
