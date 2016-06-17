@@ -12,13 +12,15 @@
  */
 package org.polymap.rap.openlayers.source;
 
+import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.base.OlObject;
 
 /**
  * Abstract base class; normally only used for creating subclasses and not
  * instantiated in apps. Base class for ol.layer.Layer sources.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.source.Source.html">OpenLayers Doc</a>
+ * @see <a href="http://openlayers.org/en/master/apidoc/ol.source.Source.html">
+ *      OpenLayers Doc</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
 public abstract class Source
@@ -28,4 +30,22 @@ public abstract class Source
         super( jsClassname );
     }
 
+
+    /**
+     * only for internal use, to give the source the opportunity to register
+     * additional stuff on the map
+     *
+     * @param map the current map
+     */
+    public void onSetMap( OlMap map ) {
+    }
+    
+    /**
+     * only for internal use, to give the source the opportunity to unregister
+     * additional stuff on the map
+     *
+     * @param map the current map
+     */
+    public void onUnsetMap( OlMap map ) {
+    }
 }

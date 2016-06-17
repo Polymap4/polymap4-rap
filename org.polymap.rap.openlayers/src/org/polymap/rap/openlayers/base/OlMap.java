@@ -149,11 +149,13 @@ public class OlMap
      */
     public void addLayer( Layer<? extends Source> layer ) {
         call( "addLayer", layer );
+        layer.onSetMap( this );
     }
 
 
     public void removeLayer( Layer<? extends Source> layer ) {
         call( "removeLayer", layer );
+        layer.onUnsetMap( this );
     }
 
 

@@ -113,14 +113,17 @@ public class OlSessionHandler {
     private void loadJavaScript() {
 
         // if not set as resource before, add this default css
-        OlPlugin.registerResource( "resources/css/bootstrap-3.3.4.min.css", "css/bootstrap.css" );
+        //OlPlugin.registerResource( "resources/css/bootstrap-3.3.4.min.css", "css/bootstrap.css" );
         OlPlugin.registerResource( "resources/css/ol-3.7.0.css", "css/ol.css" );
+        OlPlugin.registerResource( "resources/css/progress.css", "css/progress.css" );
 
         // OlPlugin.registerResource( "resources/js/ol-3.7.0.debug.js", "js/ol.js" );
+        OlPlugin.registerResource( "resources/js/progress.js", "js/progress.js" );
         OlPlugin.registerResource( "resources/js/ol-3.7.0.js", "js/ol.js" );
         OlPlugin.registerResource( "org/polymap/rap/openlayers/js/OlWrapper.js", "js/OlWrapper.js" );
 
         JavaScriptLoader jsLoader = RWT.getClient().getService( JavaScriptLoader.class );
+        jsLoader.require( OlPlugin.resourceLocation( "js/progress.js" ) );
         jsLoader.require( OlPlugin.resourceLocation( "js/ol.js" ) );
         jsLoader.require( OlPlugin.resourceLocation( "js/OlWrapper.js" ) );
     }
@@ -183,7 +186,7 @@ public class OlSessionHandler {
 
     void callRemote( String method, JsonObject json ) {
         if (isRendered) {
-            log.debug( "callRemote: " + method + " with " + json.toString().replaceAll( "\\\\\"", "'" ) );
+            log.info( "callRemote: " + method + " with " + json.toString().replaceAll( "\\\\\"", "'" ) );
             remote.call( method, json );
         }
         else {

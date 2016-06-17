@@ -13,9 +13,10 @@
 package org.polymap.rap.openlayers.layer;
 
 import org.polymap.core.runtime.config.Concern;
+import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.core.runtime.config.Config2;
+import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.source.Source;
 
@@ -41,7 +42,7 @@ public abstract class Layer<S extends Source>
 
     @Immutable
     @Mandatory
-    @Concern(OlPropertyConcern.class)
+    @Concern( OlPropertyConcern.class )
     public Config2<Layer<S>,S> source;
 
 
@@ -56,10 +57,31 @@ public abstract class Layer<S extends Source>
     public void refresh() {
         // adding the param t to the URL (of the image) causes the browser
         // to re-fetch it, bypassing all local and intermediate caches
-        call( "var source = this.obj.getSource();" + 
+        call( "var source = this.obj.getSource();" +
                 "var params = source.getParams();" +
                 "params.t = new Date().getMilliseconds();" +
                 "source.updateParams(params);" );
     }
-    
+
+
+    /**
+     * only for internal use, to give the layer the opportunity to register
+     * additional stuff on the map
+     *
+     * @param map the current map
+     */
+    public void onSetMap( OlMap map ) {
+        source.get().onSetMap( map );
+    }
+
+
+    /**
+     * only for internal use, to give the layer the opportunity to unregister
+     * additional stuff on the map
+     *
+     * @param map the current map
+     */
+    public void onUnsetMap( OlMap map ) {
+        source.get().onUnsetMap( map );
+    }
 }

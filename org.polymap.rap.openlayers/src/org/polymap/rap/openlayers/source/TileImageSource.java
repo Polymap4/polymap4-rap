@@ -14,6 +14,9 @@
  */
 package org.polymap.rap.openlayers.source;
 
+import org.eclipse.rap.rwt.widgets.WidgetUtil;
+import org.polymap.rap.openlayers.base.OlMap;
+
 /**
  * Base class for sources providing images divided into a tile grid.
  * 
@@ -28,4 +31,14 @@ public abstract class TileImageSource
         super( jsClassname );
     }
 
+    @Override
+    public void onSetMap( OlMap map ) {
+        call( "var progress=this.objs['" + WidgetUtil.getId( map.getControl() )
+                + "p']; this.obj.on('tileloadstart', function() { progress.addLoading();});" );
+        call( "var progress=this.objs['" + WidgetUtil.getId( map.getControl() )
+                + "p'];this.obj.on('tileloadend', function() { progress.addLoaded();});" );
+        call( "var progress=this.objs['" + WidgetUtil.getId( map.getControl() )
+                + "p'];this.obj.on('tileloaderror', function() { progress.addLoaded();});" );
+        super.onSetMap( map );
+    }
 }

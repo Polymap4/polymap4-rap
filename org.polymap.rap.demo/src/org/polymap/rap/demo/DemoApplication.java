@@ -43,7 +43,10 @@ public class DemoApplication
         
         // to overwrite the CSS simple add your own CSS resource as ol.css here
         application.addResource( "ol/css/ol.css", resourceName -> {
-            return load( "./resources/css/ol-3.5.0.css" );
+            return load( "./resources/css/ol-3.7.0.css" );
+        } );
+        application.addResource( "ol/css/progress.css", resourceName -> {
+            return load( "./resources/css/progress.css" );
         } );
     }
 

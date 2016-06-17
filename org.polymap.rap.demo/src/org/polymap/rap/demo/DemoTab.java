@@ -22,8 +22,9 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.polymap.rap.openlayers.base.OlMap;
-import org.polymap.rap.openlayers.layer.TileLayer;
-import org.polymap.rap.openlayers.source.MapQuestSource;
+import org.polymap.rap.openlayers.layer.ImageLayer;
+import org.polymap.rap.openlayers.source.ImageWMSSource;
+import org.polymap.rap.openlayers.source.WMSRequestParams;
 import org.polymap.rap.openlayers.types.Coordinate;
 import org.polymap.rap.openlayers.types.Projection;
 import org.polymap.rap.openlayers.types.Projection.Units;
@@ -36,101 +37,87 @@ import org.polymap.rap.openlayers.view.View;
  */
 public abstract class DemoTab {
 
-    private Composite    demoComposite;
+    private Composite demoComposite;
 
-    protected Composite  styleComposite;
+    protected Composite styleComposite;
 
     private final String name;
 
-    private Composite    form;
+    private Composite form;
 
-
-    public DemoTab( String name ) {
+    public DemoTab(String name) {
         this.name = name;
     }
-
 
     public String name() {
         return name;
     }
 
-
     public String getId() {
         String id = this.getClass().getSimpleName();
-        if (id.endsWith( "Tab" )) {
-            id = id.substring( 0, id.length() - 3 );
+        if (id.endsWith("Tab")) {
+            id = id.substring(0, id.length() - 3);
         }
         return id;
     }
 
-
-    public Composite createContents( Composite parent ) {
+    public Composite createContents(Composite parent) {
         if (form == null) {
-            form = createSashForm( parent );
+            form = createSashForm(parent);
         }
         return form;
     }
 
+    protected abstract void createStyleControls(Composite parent);
 
-    protected abstract void createStyleControls( Composite parent );
+    protected abstract void createDemoControls(Composite parent);
 
-
-    protected abstract void createDemoControls( Composite parent );
-
-
-    private Composite createSashForm( Composite parent ) {
-        SashForm horSashForm = new SashForm( parent, SWT.HORIZONTAL );
-        createLeft( horSashForm );
-        createRight( horSashForm );
-        horSashForm.setWeights( new int[] { 80, 20 } );
+    private Composite createSashForm(Composite parent) {
+        SashForm horSashForm = new SashForm(parent, SWT.HORIZONTAL);
+        createLeft(horSashForm);
+        createRight(horSashForm);
+        horSashForm.setWeights(new int[] { 80, 20 });
         return horSashForm;
     }
 
-
-    private void createLeft( Composite parent ) {
-        demoComposite = new Composite( parent, SWT.NONE );
-        demoComposite.setLayoutData( createLayoutDataForContentArea() );
-        demoComposite.setLayout( new FillLayout() );
-        createDemoControls( demoComposite );
+    private void createLeft(Composite parent) {
+        demoComposite = new Composite(parent, SWT.NONE);
+        demoComposite.setLayoutData(createLayoutDataForContentArea());
+        demoComposite.setLayout(new FillLayout());
+        createDemoControls(demoComposite);
     }
 
-
-    private void createRight( Composite parent ) {
-        styleComposite = new Composite( parent, SWT.NONE );
-        styleComposite.setLayoutData( createLayoutDataForContentArea() );
-        styleComposite.setLayout( new RowLayout( SWT.VERTICAL ) );
-        createStyleControls( styleComposite );
+    private void createRight(Composite parent) {
+        styleComposite = new Composite(parent, SWT.NONE);
+        styleComposite.setLayoutData(createLayoutDataForContentArea());
+        styleComposite.setLayout(new RowLayout(SWT.VERTICAL));
+        createStyleControls(styleComposite);
     }
-
 
     private static Object createLayoutDataForContentArea() {
         FormData formData = new FormData();
-        formData.top = new FormAttachment( 0, 35 );
-        formData.left = new FormAttachment( 0, 5 );
-        formData.right = new FormAttachment( 100, -5 );
-        formData.bottom = new FormAttachment( 100, -5 );
+        formData.top = new FormAttachment(0, 35);
+        formData.left = new FormAttachment(0, 5);
+        formData.right = new FormAttachment(100, -5);
+        formData.bottom = new FormAttachment(100, -5);
         return formData;
     }
 
+    protected OlMap defaultMap(Composite parent) {
+        OlMap map = new OlMap(parent, SWT.MULTI | SWT.WRAP | SWT.BORDER,
+                new View().projection.put(new Projection("EPSG:3857", Units.m)).zoom.put(12).center
+                        .put(new Coordinate(1401845.7269824906, 6666952.61751981)));
 
-    protected OlMap defaultMap( Composite parent ) {
-        OlMap map = new OlMap( parent, SWT.MULTI | SWT.WRAP | SWT.BORDER,
-                new View().projection.put( new Projection( "EPSG:3857", Units.m ) ).zoom
-                        .put( 12 ).center.put( new Coordinate( 1401845.7269824906,6666952.61751981 ) ) );
+        // map.addLayer( new TileLayer().source.put( new MapQuestSource(
+        // MapQuestSource.Type.osm ) ) );
 
-        map.addLayer( new TileLayer().source.put( new MapQuestSource( MapQuestSource.Type.osm ) ) );
+        map.addLayer(
+                new ImageLayer().source.put(new ImageWMSSource().url.put("http://ows.terrestris.de/osm/service/").params
+                        .put(new WMSRequestParams().layers.put("OSM-WMS"))).opacity.put(0.5f));
 
-        // map.addLayer( new ImageLayer().source
-        // .put( new ImageWMSSource().url.put(
-        // "http://ows.terrestris.de/osm/service/" ).params
-        // .put( new ImageWMSSource.RequestParams().layers.put( "OSM-WMS" ) )
-        // ).opacity
-        // .put( 0.5f ) );
-
-        map.view.get().addPropertyChangeListener( event -> {
-            StatusBar.getInstance().addInfo( parent,
-                    name() + ": " + event.properties().toString() );
-        } );
+        map.view.get().addPropertyChangeListener(event -> {
+            StatusBar.getInstance().addInfo(parent, name() + ": " + event.properties().toString());
+        });
 
         return map;
     }

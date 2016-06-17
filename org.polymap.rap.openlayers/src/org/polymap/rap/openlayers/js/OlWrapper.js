@@ -28,7 +28,7 @@ function loadCSS(url) {
 	'use strict';
 
 	loadCSS('rwt-resources/ol/css/ol.css');
-	//loadCSS('rwt-resources/ol/css/bootstrap.css');
+	loadCSS('rwt-resources/ol/css/progress.css');
 	
 	rap.registerTypeHandler("org.polymap.rap.openlayers.OlWidget", {
 
@@ -73,6 +73,12 @@ function loadCSS(url) {
 			element.setAttribute("id", id + id);
 			parent.append(element);
 
+			var progress = document.createElement('div');
+			progress.setAttribute("id", id + 'p');
+			progress.setAttribute("class", "progress");
+			parent.append(progress);
+
+			this.objs[id + 'p'] = new Progress(progress );
 //			parent.addListener("Resize", function() {
 //				var area = parent.getClientArea();
 //				console.log("layout " + parent + ", " + element + "," + area);
@@ -235,4 +241,5 @@ function loadCSS(url) {
 			context[methodNames[i]] = bind(context, method);
 		}
 	};
+	
 }());
