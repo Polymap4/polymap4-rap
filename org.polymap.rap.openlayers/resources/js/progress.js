@@ -15,7 +15,7 @@ function Progress(el) {
  * Increment the count of loading tiles.
  */
 Progress.prototype.addLoading = function() {
-	//console.log('addLoading: ' + this.loading);
+	//console.log("addLoading: " + this.loading + ";" + this.loaded);
 	if (this.loading === 0) {
 		this.show();
 	}
@@ -27,7 +27,7 @@ Progress.prototype.addLoading = function() {
  * Increment the count of loaded tiles.
  */
 Progress.prototype.addLoaded = function() {
-	//console.log('addLoaded: ' + this.loading);
+	//console.log("addLoaded: " + this.loading + ";" + this.loaded);
 	var this_ = this;
 	setTimeout(function() {
 		++this_.loaded;
@@ -40,7 +40,7 @@ Progress.prototype.addLoaded = function() {
  */
 Progress.prototype.update = function() {
 	var width = this.loaded === 0 ? '5%' : (this.loaded / this.loading * 100).toFixed(1) + '%';
-	//console.log("update: " + width);
+	//console.log("update: " + this.loading + ";" + this.loaded + ";" + width);
 	this.el.style.width = width;
 	if (this.loading === this.loaded) {
 		this.loading = 0;
@@ -63,9 +63,11 @@ Progress.prototype.show = function() {
  * Hide the progress bar.
  */
 Progress.prototype.hide = function() {
+	//console.log("hide: " + this.loading + ";" + this.loaded);
 	if (this.loading === this.loaded) {
 		this.el.style.visibility = 'hidden';
 		this.el.style.width = 0;
+		this.loading = 0;
+		//this.loaded = 0;
 	}
-	this.loading = 0;
 };
