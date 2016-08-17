@@ -49,6 +49,8 @@ public class ExtentTab
         Extent envelope = new Extent( 1380000.0, 6690000.0, 1390000.0, 6680000.0 );
 
         map.view.get().projection.set( epsg3857 );
+        map.view.get().addEventListener( View.Event.center,
+                event -> System.out.println( event.properties().toString() ) );
         map.view.get().fit( envelope, null );
     }
 

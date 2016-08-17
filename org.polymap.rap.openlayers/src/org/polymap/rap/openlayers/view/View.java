@@ -23,6 +23,8 @@ import org.polymap.rap.openlayers.base.OlEventListener;
 import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.base.OlObject;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
+import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
+import org.polymap.rap.openlayers.base.OlMap.Event;
 import org.polymap.rap.openlayers.types.Coordinate;
 import org.polymap.rap.openlayers.types.Extent;
 import org.polymap.rap.openlayers.types.Projection;
@@ -163,7 +165,10 @@ public class View
      * @param listener <b>Weakly</b> referenced by {@link EventManager}.
      */
     public void addEventListener( Event event, OlEventListener listener ) {
-        addEventListener( "change:" + event.name(), listener, null );
+        PayLoad payload = new PayLoad();
+        payload.add( "extent", "that.objs['" + getObjRef()
+                + "'].calculateExtent(that.objs['" + map.getObjRef() + "'].getSize())" );
+        addEventListener( "change:" + event.name(), listener, payload );
     }
 
 
