@@ -129,7 +129,9 @@ public class UploadService
             while (it.hasNext()) {
                 FileItemStream item = it.next();
                 
-                try (InputStream in = item.openStream()) {
+                try (
+                    InputStream in = item.openStream()
+                ){
                     if (item.isFormField()) {
                         log.info( "Form field " + item.getFieldName() + " with value " + Streams.asString( in ) + " detected.");
                     } 
