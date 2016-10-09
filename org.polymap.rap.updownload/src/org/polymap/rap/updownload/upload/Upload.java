@@ -78,7 +78,7 @@ public class Upload
         super( parent, style );
         setLayout( FormLayoutFactory.defaults().create() );
 
-        fileUpload = new FileUpload( this, SWT.NONE );
+        fileUpload = new FileUpload( this, style );
         fileUpload.setLayoutData( FormDataFactory.filled().create() );
         fileUpload.setText( i18n.get( "select" ) );
         fileUpload.setData( RWT.TOOLTIP_MARKUP_ENABLED, Boolean.TRUE );
