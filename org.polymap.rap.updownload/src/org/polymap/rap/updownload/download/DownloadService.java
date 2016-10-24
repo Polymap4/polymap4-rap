@@ -44,7 +44,7 @@ import org.polymap.core.ui.ServiceUriBuilder;
 public class DownloadService
         implements ServiceHandler {
 
-    static Log log = LogFactory.getLog( DownloadService.class );
+    static final Log log = LogFactory.getLog( DownloadService.class );
 
     private static final String         SERVICE_HANDLER_ID = "org.polymap.rap.updownload.DownloadService";
 
@@ -165,7 +165,7 @@ public class DownloadService
             // download
             else {
                 String id = request.getParameter( ID_REQUEST_PARAM );
-                log.info( "Request: id=" + id );
+                log.debug( "Request: id=" + id );
                 if (id == null) {
                     log.warn( "No 'id' param in request." );
                     response.sendError( 404 );
