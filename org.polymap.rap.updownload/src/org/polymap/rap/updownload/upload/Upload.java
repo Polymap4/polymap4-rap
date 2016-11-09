@@ -54,7 +54,7 @@ public class Upload
         extends Composite
         implements IUploadHandler {
 
-    private static Log log = LogFactory.getLog( Upload.class );
+    private static final Log log = LogFactory.getLog( Upload.class );
 
     public static final int         SHOW_UPLOAD_BUTTON = 1;
     public static final int         SHOW_PROGRESS = 2;
