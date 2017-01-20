@@ -62,7 +62,7 @@
             <localrepository refid="local.repository" />
             <remoteRepository refid="central.repository" />
 
-            <dependency groupId="org.json" artifactId="json" version="20141113" />
+            <!--dependency groupId="org.json" artifactId="json" version="20141113" /-->
             <dependency groupId="org.mockito" artifactId="mockito-core" version="1.10.19" />
         </artifact:dependencies>
     </target>
