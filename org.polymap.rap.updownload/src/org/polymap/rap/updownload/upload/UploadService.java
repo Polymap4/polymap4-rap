@@ -125,7 +125,6 @@ public class UploadService
     public void service( HttpServletRequest request, HttpServletResponse response ) 
             throws IOException, ServletException {
         try {
-            log.info( "Request: " + request );
             FileItemIterator it = fileUpload.getItemIterator( request );
             while (it.hasNext()) {
                 FileItemStream item = it.next();
