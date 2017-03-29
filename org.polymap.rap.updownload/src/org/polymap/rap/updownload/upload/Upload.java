@@ -1,6 +1,6 @@
 /* 
  * polymap.org
- * Copyright (C) 2013-2015, Falko Bräutigam. All rights reserved.
+ * Copyright (C) 2013-2017, Falko Bräutigam. All rights reserved.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,8 @@ import org.polymap.core.ui.FormLayoutFactory;
 import org.polymap.core.ui.UIUtils;
 
 /**
- * 
+ * A high level file upload widget that uses {@link FileUpload} and
+ * {@link UploadService}.
  *
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  */

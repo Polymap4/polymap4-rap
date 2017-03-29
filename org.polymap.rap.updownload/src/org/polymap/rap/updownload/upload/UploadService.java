@@ -1,6 +1,6 @@
 /* 
  * polymap.org
- * Copyright (C) 2015, Falko Bräutigam. All rights reserved.
+ * Copyright (C) 2015-2017, Falko Bräutigam. All rights reserved.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,7 @@ import org.polymap.core.ui.ServiceUriBuilder;
 public class UploadService
         implements ServiceHandler {
 
-    private static Log log = LogFactory.getLog( UploadService.class );
+    private static final Log log = LogFactory.getLog( UploadService.class );
 
     private static final String         SERVICE_HANDLER_ID = "org.polymap.rap.updownload.UploadService";
 
@@ -125,6 +125,7 @@ public class UploadService
     public void service( HttpServletRequest request, HttpServletResponse response ) 
             throws IOException, ServletException {
         try {
+            log.info( "Request: " + request );
             FileItemIterator it = fileUpload.getItemIterator( request );
             while (it.hasNext()) {
                 FileItemStream item = it.next();
@@ -133,10 +134,10 @@ public class UploadService
                     InputStream in = item.openStream()
                 ){
                     if (item.isFormField()) {
-                        log.info( "Form field " + item.getFieldName() + " with value " + Streams.asString( in ) + " detected.");
+                        log.info( "Form item " + item.getFieldName() + " with value " + Streams.asString( in ) + " detected.");
                     } 
                     else {
-                        log.info( "File field " + item.getFieldName() + " with file name " + item.getName() + " detected.");
+                        log.info( "File item '" + item.getFieldName() + "' with name '" + item.getName() + "' detected.");
                         
                         String handlerId = request.getParameter( ID_REQUEST_PARAM );
                         assert handlerId != null;
