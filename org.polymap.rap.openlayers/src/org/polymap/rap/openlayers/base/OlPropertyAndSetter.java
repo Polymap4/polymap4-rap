@@ -19,9 +19,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Denotes the name of the setter method to modify an JavaClass property used by
- * {@link OlPropertyConcern}. But initially the data must be set via c'tor if the
- * OlObject isn't created yet.
+ * Denotes a property that is initially set as a JavaScript {@link OlProperty
+ * property} and, once the object is created, is set via the given {@link OlSetter
+ * setter}.
  * 
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
@@ -29,8 +29,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 @Documented
-public @interface OlCtorAndSeparateSetter {
+public @interface OlPropertyAndSetter {
 
-    public String value();
+    /** The name of the property to initially set a value. */
+    public String property();
+
+    /** The name of the setter to be used to chnage the value after object has been created. */
+    public String setter();
 
 }

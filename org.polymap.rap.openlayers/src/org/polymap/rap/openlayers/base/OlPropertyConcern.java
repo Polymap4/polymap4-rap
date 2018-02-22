@@ -12,14 +12,18 @@
  */
 package org.polymap.rap.openlayers.base;
 
-import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.lang.reflect.Field;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONString;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.polymap.core.runtime.config.Config;
 import org.polymap.core.runtime.config.ConfigurationException;
 import org.polymap.core.runtime.config.DefaultPropertyConcern;
@@ -38,40 +42,36 @@ import org.polymap.core.runtime.config.DefaultPropertyConcern;
 public class OlPropertyConcern
         extends DefaultPropertyConcern<Object> {
 
-    private static Log log = LogFactory.getLog( OlPropertyConcern.class );
-
+    private static final Log log = LogFactory.getLog( OlPropertyConcern.class );
 
     @Override
     public synchronized Object doSet( Object obj, Config<Object> prop, Object value ) {
         //log.info( obj.getClass().getSimpleName() + "." + prop.info().getName() + " = " + value );
 
-        OlSetter setterAnnotation = prop.info().getAnnotation( OlSetter.class );
-        OlCtorAndSeparateSetter ctorAndSetterAnnotation = prop.info()
-                .getAnnotation( OlCtorAndSeparateSetter.class );
-        OlProperty propertyAnnotation = prop.info().getAnnotation( OlProperty.class );
+        OlSetter sa = prop.info().getAnnotation( OlSetter.class );
+        OlPropertyAndSetter psa = prop.info().getAnnotation( OlPropertyAndSetter.class );
+        OlProperty pa = prop.info().getAnnotation( OlProperty.class );
+        assert Arrays.asList( sa, pa, psa ).stream().filter( e -> e!=null ).count() <= 1;  // mutual exclusive
+
+        OlObject olobj = (OlObject)obj;
 
         // setter
-        if (setterAnnotation != null) {
-            assert propertyAnnotation == null;
-            assert ctorAndSetterAnnotation == null;
-            ((OlObject)obj).call( setterAnnotation.value(), value );
+        if (sa != null) {
+            olobj.call( sa.value(), value );
         }
-        else if (ctorAndSetterAnnotation != null && ((OlObject)obj).isCreated()) {
-            // use the setter if it is created
-            ((OlObject)obj).call( ctorAndSetterAnnotation.value(), value );
+        // propertyAndSetter
+        else if (psa != null) {
+            if (olobj.isCreated()) {
+                olobj.call( psa.setter(), value );
+            }
         }
         // property
         else {
-            assert setterAnnotation == null;
-
-            // is the object created as JS on the client already?
-            // if it is created, then we just set the attribute
-            if (((OlObject)obj).isCreated()) {
-
+            // if object is not yet created then the property
+            // is given to the ctor by #propertiesAsJson()
+            if (olobj.isCreated()) {
                 Object jsonValue = propertyAsJson( value );
-
-                String propName = propertyAnnotation != null ? propertyAnnotation.value()
-                        : prop.info().getName();
+                String propName = pa != null ? pa.value() : prop.info().getName();
                 ((OlObject)obj).setAttribute( propName, jsonValue );
             }
         }
@@ -121,11 +121,16 @@ public class OlPropertyConcern
                         Config prop = (Config)f.get( obj );
                         Object value = prop.get();
                         if (value != null) {
-                            Object jsonValue = propertyAsJson( value );
-
+                            String name = f.getName();
                             OlProperty a = f.getAnnotation( OlProperty.class );
-                            String name = a != null ? a.value() : f.getName();
-
+                            if (a != null) {
+                                name = a.value();
+                            }
+                            OlPropertyAndSetter a2 = f.getAnnotation( OlPropertyAndSetter.class );
+                            if (a2 != null) {
+                                name = a2.property();
+                            }
+                            Object jsonValue = propertyAsJson( value );
                             json.put( name, jsonValue );
                         }
                     }
@@ -171,11 +176,9 @@ public class OlPropertyConcern
 
         private String value;
 
-
         public Unquoted( String value ) {
             this.value = value;
         }
-
 
         @Override
         public String toJSONString() {

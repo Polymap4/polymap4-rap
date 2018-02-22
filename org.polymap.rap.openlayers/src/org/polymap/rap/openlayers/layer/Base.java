@@ -16,6 +16,7 @@ import org.polymap.core.runtime.config.Check;
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.NumberRangeValidator;
+
 import org.polymap.rap.openlayers.base.OlObject;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.types.Extent;
@@ -43,12 +44,14 @@ public class Base
     @Concern(OlPropertyConcern.class)
     public Config2<Base,Boolean> visible;
 
-    /**
-     * The z-index for layer rendering. At rendering time, the layers will be
-     * ordered, first by Z-index and then by position. The default Z-index is 0.
-     */
-    @Concern(OlPropertyConcern.class)
-    public Config2<Base,Float>   zIndex;
+    // Not supported by OL3
+//    /**
+//     * The z-index for layer rendering. At rendering time, the layers will be
+//     * ordered, first by Z-index and then by position. The default Z-index is 0.
+//     */
+//    @Concern(OlPropertyConcern.class)
+//    @OlPropertyAndSetter( property="zIndex", setter="setZIndex" )
+//    public Config2<Base,Float>   zIndex;
 
     /**
      * The minimum resolution (inclusive) at which this layer will be visible.

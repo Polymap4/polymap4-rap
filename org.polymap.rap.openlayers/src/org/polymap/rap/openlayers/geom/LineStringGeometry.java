@@ -25,7 +25,8 @@ import java.util.List;
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.rap.openlayers.base.OlCtorAndSeparateSetter;
+
+import org.polymap.rap.openlayers.base.OlPropertyAndSetter;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.types.Coordinate;
 
@@ -42,7 +43,7 @@ public class LineStringGeometry
     // @Immutable
     @Mandatory
     @Concern(OlPropertyConcern.class)
-    @OlCtorAndSeparateSetter(value = "setCoordinates")
+    @OlPropertyAndSetter(property="coordinates", setter="setCoordinates")
     public Config2<LineStringGeometry,List<Coordinate>> coordinates;
 
 
