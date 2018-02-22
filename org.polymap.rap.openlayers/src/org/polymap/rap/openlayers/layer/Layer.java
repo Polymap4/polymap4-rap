@@ -16,6 +16,7 @@ import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
+
 import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.source.Source;
@@ -53,6 +54,10 @@ public abstract class Layer<S extends Source>
 
     /**
      * Refresh this layer by re-fetching data from the server.
+     * 
+     * @deprecated This adds a param ("t") with current time to the request params;
+     *             this works only for WMS. Introduces cache problems as the t param is not
+     *             saved between sessions. Better implement proper ETag/Last-modified.
      */
     public void refresh() {
         // adding the param t to the URL (of the image) causes the browser
