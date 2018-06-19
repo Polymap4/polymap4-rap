@@ -1,5 +1,6 @@
 /*
- * polymap.org Copyright 2009-2013, Polymap GmbH. All rights reserved.
+ * polymap.org 
+ * Copyright 2009-2018, Polymap GmbH. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -13,22 +14,33 @@
 package org.polymap.rap.openlayers.base;
 
 import java.util.List;
+import java.util.Optional;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.rap.rwt.widgets.WidgetUtil;
+
+import com.google.common.collect.Lists;
+
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
+
+import org.eclipse.rap.rwt.widgets.WidgetUtil;
+
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
+
 import org.polymap.rap.openlayers.base.OlPropertyConcern.Unquoted;
 import org.polymap.rap.openlayers.control.Control;
 import org.polymap.rap.openlayers.interaction.Interaction;
 import org.polymap.rap.openlayers.layer.Layer;
 import org.polymap.rap.openlayers.source.Source;
+import org.polymap.rap.openlayers.types.Coordinate;
+import org.polymap.rap.openlayers.types.Pixel;
 import org.polymap.rap.openlayers.view.View;
 
 /**
@@ -56,29 +68,128 @@ public class OlMap
 
     private final static Log log = LogFactory.getLog( OlMap.class );
 
-
+    /** 
+     * Event types of {@link OlMap}. 
+     */
     public enum Event {
-        layerGroup( "change:layerGroup" ),
-        size( "change:size" ),
-        target( "change:target" ),
-        view( "change:view" ),
-        click( "click" ),
-        boxstart( "boxstart" ),
-        boxend( "boxend" );
+        LAYERGROUP( "change:layerGroup" ),
+        SIZE( "change:size" ),
+        TARGET( "change:target" ),
+        VIEW( "change:view" ),
+        /** @see ClickEventPayload */
+        CLICK( "click" ),
+        /** @see BoxEventPayload */
+        BOXSTART( "boxstart" ),
+        /** @see BoxEventPayload */
+        BOXEND( "boxend" ),
+        /** @see PointerEventPayload */
+        POINTERMOVE( "pointermove" );
 
-        private String eventName;
+        private String name;
 
-
-        Event( String eventName ) {
-            this.eventName = eventName;
+        private Event( String name ) {
+            this.name = name;
         }
 
-
-        public String getEventName() {
-            return eventName;
+        public String toString() {
+            return name;
         }
     }
 
+    /**
+     * The coordinates of an {@link Event#CLICK} event. 
+     * @see Event#CLICK
+     */
+    public static class ClickEventPayload
+            extends OlEventPayload {
+
+        public static Optional<ClickEventPayload> findIn( OlEvent ev ) {
+            JSONObject json = ev.properties().optJSONObject( "click" );
+            return Optional.ofNullable( json != null ? new ClickEventPayload( json ) : null );
+        }
+
+        // receive ****************************************
+        
+        private JSONObject          json;
+
+        protected ClickEventPayload( JSONObject json ) {
+            this.json = json;
+        }
+
+        public Coordinate coordinate() {
+            JSONArray coord = json.getJSONArray( "coordinate" );
+            return new Coordinate( coord.getDouble( 0 ), coord.getDouble( 1 ) );
+        }
+        
+        public Pixel pixel( OlEvent ev ) {
+            JSONArray pixel = json.getJSONArray( "pixel" );
+            return new Pixel( pixel.getInt( 0 ), pixel.getInt( 1 ) );
+        }
+        
+        // send *******************************************
+        
+        public ClickEventPayload() {
+            super();
+        }
+        
+        @Override
+        public List<Variable> variables() {
+            return Lists.newArrayList(
+                    new Variable( "click", "{}" ),
+                    new Variable( "click.pixel", "theEvent.pixel" ),
+                    new Variable( "click.coordinate", jsObjRef() + ".getCoordinateFromPixel(theEvent.pixel)" ) );
+        }
+    }
+
+
+    /**
+     * The coordinates of an {@link Event#POINTERMOVE} event. 
+     * @see Event#POINTERMOVE
+     */
+    public static class PointerEventPayload
+            extends OlEventPayload {
+
+        public static Optional<PointerEventPayload> findIn( OlEvent ev ) {
+            JSONObject json = ev.properties().optJSONObject( "pointer" );
+            return Optional.ofNullable( json != null ? new PointerEventPayload( json ) : null );
+        }
+
+        // receive ****************************************
+        
+        private JSONObject          json;
+
+        protected PointerEventPayload( JSONObject json ) {
+            this.json = json;
+        }
+
+        public Coordinate coordinate() {
+            JSONArray coord = json.getJSONArray( "coordinate" );
+            return new Coordinate( coord.getDouble( 0 ), coord.getDouble( 1 ) );
+        }
+        
+        public Pixel pixel() {
+            JSONArray pixel = json.getJSONArray( "pixel" );
+            return new Pixel( pixel.getInt( 0 ), pixel.getInt( 1 ) );
+        }
+        
+        // send *******************************************
+        
+        public PointerEventPayload() {
+            super();
+        }
+        
+        @Override
+        public List<Variable> variables() {
+            return Lists.newArrayList(
+                    new Variable( "pointer", "{}" ),
+                    new Variable( "pointer.pixel", "theEvent.pixel" ),
+                    new Variable( "pointer.coordinate", jsObjRef() + ".getCoordinateFromPixel(theEvent.pixel)" ) );
+        }
+    }
+
+    
+    // instance *******************************************
+    
     @Mandatory
     @Immutable
     public Config2<OlMap,View>               view;
@@ -101,15 +212,11 @@ public class OlMap
         widget = new Composite( parent, style );
         widget.setLayout( new Layout() {
 
-            private static final long serialVersionUID = 1L;
-
-
             @Override
             protected void layout( Composite composite, boolean flushCache ) {
 //                log.info( "layout " + composite + ", " + flushCache );
                 update();
             }
-
 
             @Override
             protected Point computeSize( Composite composite, int wHint, int hHint, boolean flushCache ) {
@@ -129,19 +236,6 @@ public class OlMap
     public Composite getControl() {
         return widget;
     }
-
-    //
-    // @SuppressWarnings("unchecked")
-    // public <T extends Interaction> T getInteraction( Class<T> clazz ) {
-    // if(interactions.get() != null) {
-    // for(Interaction interaction : interactions.get()) {
-    // if(clazz.isAssignableFrom( interaction.getClass() )) {
-    // return (T) interaction;
-    // }
-    // }
-    // }
-    // return null;
-    // }
 
 
     /**
@@ -212,34 +306,25 @@ public class OlMap
     // ".updateSize();", "}, 500 );").toString());
     // }
 
+
     /**
-     * The event contains the new center, resolution and rotation.
-     * 
-     * @param event
-     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+     * @param event One of the {@link Event} types.
+     * @param payload {@link ClickEventPayload}, {@link BoxEventPayload},
+     *        {@link PointerEventPayload} according to the event type or any other
+     *        appropriate payload.
      */
-    public void addEventListener( Event event, OlEventListener listener ) {
-        PayLoad payload = null;
-        if (event == Event.click) {
-            payload = new PayLoad();
-            payload.add( "feature", "{}" );
-            payload.add( "feature.pixel", "theEvent.pixel" );
-            payload.add( "feature.coordinate", "that.objs['" + getObjRef()
-                    + "'].getCoordinateFromPixel(theEvent.pixel)" );
-        }
-        else if (event == Event.boxstart || event == Event.boxend) {
-            payload = new PayLoad();
-            payload.add( "feature", "{}" );
-            payload.add( "feature.pixel", "that.objs['" + getObjRef()
-                    + "'].getPixelFromCoordinate(theEvent.coordinate)" );
-            payload.add( "feature.coordinate", "theEvent.coordinate" );
-        }
-        addEventListener( event.getEventName(), listener, payload );
+    @Override
+    public void addEventListener( Object event, Object annotated, OlEventPayload... payload ) {
+        super.addEventListener( event, annotated, payload );
     }
 
 
-    public void removeEventListener( Event event, OlEventListener listener ) {
-        removeEventListener( event.getEventName(), listener );
+    /**
+     * @param event One of the {@link Event} types.
+     */
+    @Override
+    public void removeEventListener( Object event, Object annotated ) {
+        super.removeEventListener( event, annotated );
     }
 
 

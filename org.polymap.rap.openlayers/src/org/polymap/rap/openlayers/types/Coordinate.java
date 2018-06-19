@@ -14,6 +14,7 @@
 package org.polymap.rap.openlayers.types;
 
 import org.json.JSONArray;
+
 import org.polymap.rap.openlayers.base.Jsonable;
 
 /**
@@ -25,9 +26,9 @@ import org.polymap.rap.openlayers.base.Jsonable;
 public class Coordinate
         implements Jsonable {
 
-    private double x;
+    public double   x;
 
-    private double y;
+    public double   y;
 
 
     public Coordinate( double x, double y ) {

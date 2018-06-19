@@ -13,6 +13,8 @@
 package org.polymap.rap.openlayers.layer;
 
 import org.polymap.core.runtime.config.Mandatory;
+
+import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.source.ClusterSource;
 
 /**
@@ -36,14 +38,8 @@ public class ClusterLayer
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.polymap.rap.openlayers.base.OlObject#create(java.lang.String,
-     * java.lang.String)
-     */
     @Override
-    protected void create( String jsClassname, String options ) {
+    protected void doCreate() {
         StringBuilder sb = new StringBuilder();
         sb.append( "\"style\": function(feature, resolution) {" );
         sb.append( "   var styleCache = {};" );
@@ -71,9 +67,11 @@ public class ClusterLayer
         sb.append( "    }" );
         sb.append( "    return style;" );
         sb.append( "}" );
+        
+        String options = OlPropertyConcern.propertiesAsJson( this );
         StringBuilder sb2 = new StringBuilder( options );
         int index = options.lastIndexOf( "}" );
         sb2.insert( index, "," + sb.toString() );
-        super.create( jsClassname, sb2.toString() );
+        super.createWithOptions( sb2.toString() );
     }
 }

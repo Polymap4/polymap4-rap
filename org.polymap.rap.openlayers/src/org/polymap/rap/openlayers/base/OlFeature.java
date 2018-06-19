@@ -1,5 +1,6 @@
 /*
- * polymap.org Copyright (C) 2009-2015 Polymap GmbH. All rights reserved.
+ * polymap.org 
+ * Copyright (C) 2009-2018 Polymap GmbH. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -17,10 +18,12 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
+
 import org.polymap.rap.openlayers.geom.Geometry;
 import org.polymap.rap.openlayers.style.Base;
 import org.polymap.rap.openlayers.types.Coordinate;
@@ -28,13 +31,13 @@ import org.polymap.rap.openlayers.types.Coordinate;
 /**
  * A vector object for geographic features with a geometry and other attribute
  * properties, similar to the features in vector file formats like GeoJSON.
- * 
+ * <p/>
  * Features can be styled individually with setStyle; otherwise they use the style of
  * their vector layer.
- * 
+ * <p/>
  * Note that attribute properties are set as ol.Object properties on the feature
  * object, so they are observable, and have get/set accessors.
- * 
+ * <p/>
  * Typically, a feature has a single geometry property. You can set the geometry
  * using the setGeometry method and get it with getGeometry. It is possible to store
  * more than one geometry on a feature using attribute properties. By default, the
@@ -51,7 +54,7 @@ import org.polymap.rap.openlayers.types.Coordinate;
 public class OlFeature
         extends OlObject {
 
-    private final static Log             log = LogFactory.getLog( OlFeature.class );
+    private final static Log log = LogFactory.getLog( OlFeature.class );
 
     // @Mandatory
     // @Immutable

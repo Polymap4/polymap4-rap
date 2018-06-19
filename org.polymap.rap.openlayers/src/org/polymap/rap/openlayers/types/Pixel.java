@@ -20,9 +20,8 @@
 package org.polymap.rap.openlayers.types;
 
 import org.json.JSONArray;
+
 import org.polymap.rap.openlayers.base.Jsonable;
-import org.polymap.rap.openlayers.base.OlObject;
-import org.polymap.rap.openlayers.util.Stringer;
 
 /**
  * An array with two elements, representing a pixel. The first element is the
@@ -34,9 +33,9 @@ import org.polymap.rap.openlayers.util.Stringer;
 public class Pixel
         implements Jsonable {
 
-    private int x;
+    public int  x;
 
-    private int y;
+    public int  y;
 
 
     public Pixel( int x, int y ) {

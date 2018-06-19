@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright 2009, Polymap GmbH, and individual contributors as indicated
- * by the @authors tag.
+ * polymap.org
+ * Copyright (C) 2009-2018, Polymap GmbH. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -10,22 +10,16 @@
  * This software is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along
- * with this software; if not, write to the Free Software Foundation, Inc., 51
- * Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF site:
- * http://www.fsf.org.
  */
-
 package org.polymap.rap.openlayers.geom;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.polymap.core.runtime.config.Concern;
+import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.core.runtime.config.Config2;
 
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.types.Coordinate;
@@ -57,9 +51,9 @@ public class PolygonGeometry
 
 
     @Override
-    protected void create() {
+    protected void doCreate() {
         // XXX warum das geschachtelte array? wenn das nicht ist, dann kommen wir ganz ohne diese methode aus
-        super.create( jsClassname, "[" + OlPropertyConcern.propertyAsJson( coordinates.get() ) + "]" );
+        super.createWithOptions( "[" + OlPropertyConcern.propertyAsJson( coordinates.get() ) + "]" );
         
 //        Stringer command = new Stringer( "new ", jsClassname, "([[" );
 //        boolean afterFirst = false;

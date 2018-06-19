@@ -1,6 +1,6 @@
 /*
- * polymap.org Copyright 2009, Polymap GmbH, and individual contributors as indicated
- * by the @authors tag.
+ * polymap.org 
+ * Copyright 2009-2018, Polymap GmbH. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -10,23 +10,23 @@
  * This software is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along
- * with this software; if not, write to the Free Software Foundation, Inc., 51
- * Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF site:
- * http://www.fsf.org.
  */
 package org.polymap.rap.openlayers.base;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+
+import java.lang.ref.WeakReference;
+
+import org.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.rap.json.JsonObject;
 import org.eclipse.rap.json.JsonValue;
 import org.eclipse.rap.rwt.RWT;
@@ -35,9 +35,11 @@ import org.eclipse.rap.rwt.client.service.JavaScriptLoader;
 import org.eclipse.rap.rwt.remote.AbstractOperationHandler;
 import org.eclipse.rap.rwt.remote.Connection;
 import org.eclipse.rap.rwt.remote.RemoteObject;
-import org.json.JSONObject;
+
+import org.polymap.core.runtime.event.EventHandler;
+
 import org.polymap.rap.openlayers.OlPlugin;
-import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
+import org.polymap.rap.openlayers.base.OlEventPayload.Variable;
 import org.polymap.rap.openlayers.util.Stringer;
 
 /**
@@ -49,71 +51,62 @@ import org.polymap.rap.openlayers.util.Stringer;
  */
 public class OlSessionHandler {
 
-    private final static Log     log   = LogFactory.getLog( OlSessionHandler.class );
+    private final static Log log = LogFactory.getLog( OlSessionHandler.class );
+    
+    public static OlSessionHandler instance() {
+        return SingletonUtil.getSessionInstance( OlSessionHandler.class );
+    }
+    
+    // instance *******************************************
 
-    /**
-     * HashMap to hold references to created objects as value with the client side id
-     * as key
-     */
-    private Map<String,WeakReference<OlObject>> ref2obj;
+    /** Maps client side ID into references to created objects. */
+    private Map<String,WeakReference<OlObject>> ref2obj = new HashMap();
 
-    public Vector<OlCommand>     cmdsBeforeRemoteWasPresent;
+    private volatile int        refCounter;
 
-    private int                  referenceCounter;
+    private RemoteObject        remote;
 
-    private final RemoteObject   remote;
+    private List<RemoteCall>    calls = new ArrayList<RemoteCall>();
 
-    private List<RemoteCall>     calls = new ArrayList<RemoteCall>();
-
-    private boolean              isRendered;
+    private boolean             isRendered;
 
 
     private OlSessionHandler() {
-        // weakhashmap doesnt work as expected here
-        ref2obj = new HashMap<String,WeakReference<OlObject>>();
-        cmdsBeforeRemoteWasPresent = new Vector<OlCommand>();
-
         Connection connection = RWT.getUISession().getConnection();
         remote = connection.createRemoteObject( "org.polymap.rap.openlayers.OlWidget" );
         loadJavaScript();
 
-        remote.setHandler( operationHandler );
         remote.set( "appearance", "composite" );
         remote.set( "overflow", "hidden" );
-    }
 
-    private final AbstractOperationHandler operationHandler = new AbstractOperationHandler() {
-
-        private static final long serialVersionUID = 1L;
-
-
-        @Override
-        public void handleCall( String method, JsonObject properties ) {
-//            log.warn( this + ".handleCall " + method + ";" + properties.toString() );
-            if ("handleOnRender".equals( method )) {
-                isRendered = true;
-                for (RemoteCall call : calls) {
-                    callRemote( call.method, call.json );
+        remote.setHandler( new AbstractOperationHandler() {
+            @Override 
+            public void handleCall( String method, JsonObject properties ) {
+//                log.warn( this + ".handleCall " + method + ";" + properties.toString() );
+                if ("handleOnRender".equals( method )) {
+                    isRendered = true;
+                    for (RemoteCall call : calls) {
+                        callRemote( call.method, call.json );
+                    }
+                    calls.clear();
                 }
-                calls.clear();
-            }
-            else {
-                JsonValue objRefJS = properties.get( "event_src_obj" );
-                if (objRefJS != null) {
-                    String objRef = objRefJS.asString();
-                    properties.remove( "event_src_obj" );
-                    OlObject obj = getObject( objRef );
-                    if (obj != null) {
-                        obj.handleEvent( new OlEvent( obj, method, new JSONObject( properties.toString() ) ) );
+                else {
+                    JsonValue objRefJS = properties.get( "event_src_obj" );
+                    if (objRefJS != null) {
+                        String objRef = objRefJS.asString();
+                        properties.remove( "event_src_obj" );
+                        OlObject obj = getObject( objRef );
+                        if (obj != null) {
+                            obj.handleEvent( new OlEvent( obj, method, new JSONObject( properties.toString() ) ) );
+                        }
                     }
                 }
             }
-        }
-    };
+        });
+    }
 
 
-    private void loadJavaScript() {
-
+    protected void loadJavaScript() {
         // if not set as resource before, add this default css
         //OlPlugin.registerResource( "resources/css/bootstrap-3.3.4.min.css", "css/bootstrap.css" );
         OlPlugin.registerResource( "resources/css/ol-3.7.0.css", "css/ol.css" );
@@ -131,44 +124,50 @@ public class OlSessionHandler {
     }
 
 
-    // remote call
-
     public void call( OlCommand command ) {
         callRemote( "call", command.getJson() );
     }
-    //
-    // public void call( String method, JsonObject json ) {
-    // callRemote( method, json );
-    // }
 
 
-    void registerEventListener( OlObject src, String event, OlEventListener listener, PayLoad payload ) {
-        Stringer payloadStringer = new Stringer();
-        if (payload != null) {
-            payload.values()
-                    .forEach( value -> payloadStringer.add( "result.", value.key(), " = ", value.value(), ";" ) );
+    /**
+     * 
+     *
+     * @param src
+     * @param event
+     * @param annotated The {@link EventHandler annotated} event listener.
+     * @param payload The map of variables to send back to server and the JS code
+     *        that produces their values.
+     */
+    void registerEventListener( OlObject src, String event, Object annotated,
+            OlEventPayload... payload ) {
+        // FIXME call OlMap.getProperties() would cause 'TypeError: cyclic object value'
+        Stringer code = src instanceof OlMap
+                ? Stringer.on( "" ).add( "var result = {};" )
+                : Stringer.on( "" ).add( "var result = that.objs['", src.getObjRef(), "'].getProperties();" );
+        
+        //command.add( "console.log('", event, "');" );
+                
+        code.add( "result['event_src_obj'] = '" + src.getObjRef() + "';" ); 
+        for (OlEventPayload entry : payload) {
+            entry.init( src );
+            for (Variable variable : entry.variables()) {
+                code.add( "result.", variable.name, " = ", variable.code, ";" );
+            }
         }
-        // FIXME call OlMap.getProperties() would cause 'TypeError: cyclic object
-        // value'
-        String command = null;
-        if (src instanceof OlMap) {
-            command = "var result = {};";
-        }
-        else {
-            command = new Stringer( "var result = that.objs['", src.getObjRef(), "'].getProperties();" ).toString();
-        }
-        command = new Stringer(
-                // "console.log('", event, "');",
-                command, "result['event_src_obj'] = '" + src.getObjRef() + "';", payloadStringer,
-                "rap.getRemoteObject(that).call( '", event, "', result);" ).toString();
-        callRemote( "addListener", new JsonObject().add( "src", src.getObjRef() ).add( "code", command )
-                .add( "event", event ).add( "hashCode", event + "_" + listener.hashCode() ) );
+        code.add( "rap.getRemoteObject(that).call( '", event, "', result);" );
+        
+        callRemote( "addListener", new JsonObject()
+                .add( "src", src.getObjRef() )
+                .add( "code", code.toString() )
+                .add( "event", event )
+                .add( "hashCode", Stringer.on( "_" ).add( event, annotated.hashCode() ).toString() ) );
     }
 
 
-    void unregisterEventListener( OlObject src, String event, OlEventListener listener ) {
-        callRemote( "removeListener",
-                new JsonObject().add( "src", src.getObjRef() ).add( "hashCode", event + "_" + listener.hashCode() ) );
+    void unregisterEventListener( OlObject src, String event, Object annotated ) {
+        callRemote( "removeListener", new JsonObject()
+                .add( "src", src.getObjRef() )
+                .add( "hashCode", event + "_" + annotated.hashCode() ) );
     }
 
 
@@ -197,14 +196,10 @@ public class OlSessionHandler {
     }
 
 
-    public synchronized static OlSessionHandler getInstance() {
-        return SingletonUtil.getSessionInstance( OlSessionHandler.class );
-    }
-
-
-    public synchronized String generateReference( OlObject src ) {
-        String newRef = "ol" + referenceCounter++;
-        if (ref2obj.put( newRef, new WeakReference(src) ) != null) {
+    public String newReference( OlObject src ) {
+        assert Display.getCurrent() != null;
+        String newRef = Stringer.join( "ol", refCounter++ );
+        if (ref2obj.put( newRef, new WeakReference( src ) ) != null) {
             throw new IllegalStateException( "objRef already added: " + newRef );
         }
         return newRef;
@@ -218,6 +213,7 @@ public class OlSessionHandler {
 
 
     public void remove( String objRef ) {
+        assert Display.getCurrent() != null;
         ref2obj.remove( objRef );
     }
 

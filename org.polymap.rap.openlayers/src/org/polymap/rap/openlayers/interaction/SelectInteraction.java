@@ -1,5 +1,6 @@
 /*
- * polymap.org Copyright (C) 2009-2014, Polymap GmbH. All rights reserved.
+ * polymap.org 
+ * Copyright (C) 2009-2018, Polymap GmbH. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -14,12 +15,19 @@ package org.polymap.rap.openlayers.interaction;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import org.json.JSONObject;
+
+import com.google.common.collect.Lists;
 
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
-import org.polymap.rap.openlayers.base.OlEventListener;
-import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
+
+import org.polymap.rap.openlayers.base.OlEvent;
+import org.polymap.rap.openlayers.base.OlEventPayload;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.layer.VectorLayer;
 
@@ -33,8 +41,6 @@ import org.polymap.rap.openlayers.layer.VectorLayer;
  * 
  * Selected features are added to an internal unmanaged layer.
  * 
- * 
- * 
  * @see <a href="http://openlayers.org/en/master/apidoc/ol.interaction.Select.html">
  *      OpenLayers Doc</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
@@ -42,41 +48,65 @@ import org.polymap.rap.openlayers.layer.VectorLayer;
 public class SelectInteraction
         extends Interaction {
 
+    /**
+     * Event types of {@link SelectInteraction}.
+     */
     public enum Event {
-        select("select");
+        SELECT( "select" );
 
-        private String value;
+        private String name;
 
-
-        private Event( String value ) {
-            this.value = value;
+        private Event( String name ) {
+            this.name = name;
         }
 
-
-        public String getValue() {
-            return this.value;
+        public String toString() {
+            return name;
         }
     }
-//
-//
-//    public enum Type implements Jsonable {
-//        Point, LineString, Polygon, Circle;
-//
-//        @Override
-//        public Object toJson() {
-//            return "/** @type {ol.geom.GeometryType} */ '" + name() + "'";
-//        }
-//    }
 
-    // TODO more properties
+    /**
+     * The feature ID of an {@link Event#SELECT} event. 
+     * @see Event#SELECT
+     */
+    public static class DrawendEventPayload
+            extends OlEventPayload {
 
+        public static Optional<DrawendEventPayload> findIn( OlEvent ev ) {
+            return Optional.ofNullable( ev.properties().optString( "selected" ) != null 
+                    ? new DrawendEventPayload( ev.properties() ) : null );
+        }
+
+        // receive ****************************************
+        
+        private JSONObject          json;
+
+        protected DrawendEventPayload( JSONObject json ) {
+            this.json = json;
+        }
+
+        /** The selected feature ID. */
+        public String selected() {
+            return json.getString( "selected" );
+        }
+        
+        // send *******************************************
+        
+        public DrawendEventPayload() {
+        }
+        
+        @Override
+        public List<Variable> variables() {
+            return Lists.newArrayList(
+                    new Variable( "selected", "theEvent.selected != null ? theEvent.selected.map( function(feature) {return feature.get(\"id\");}) : {}" ) );
+        }
+    }
+
+    // instance *******************************************
+    
     @Immutable
     @Concern(OlPropertyConcern.class)
     public Config2<SelectInteraction, Collection<VectorLayer>> layers;
-//
-//    @Immutable
-//    @Concern(OlPropertyConcern.class)
-//    public Config<Type>         type;
 
 
     public SelectInteraction( VectorLayer... layers) {
@@ -84,15 +114,24 @@ public class SelectInteraction
         this.layers.set( Arrays.asList( layers ) );
     }
 
-
-    public void addEventListener( Event event, OlEventListener listener ) {
-        PayLoad payload = new PayLoad();
-        payload.add( "selected", "theEvent.selected != null ? theEvent.selected.map( function(feature) {return feature.get(\"id\");}) : {}" );
-        addEventListener( event.getValue(), listener, payload );
+    
+    /**
+     * @param event One of the {@link Event} types.
+     * @param payload {@link SelectEventPayload} or any other appropriate payload.
+     */
+    @Override
+    public void addEventListener( Object event, Object annotated, OlEventPayload... payload ) {
+        super.addEventListener( event, annotated, payload );
     }
 
 
-    public void removeEventListener( Event event, OlEventListener listener ) {
-        removeEventListener( event.getValue(), listener );
+    /**
+     * @param event One of the {@link Event} types.
+     */
+    @Override
+    public void removeEventListener( Object event, Object annotated ) {
+        super.removeEventListener( event, annotated );
     }
+
+
 }

@@ -5,11 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.json.JSONArray;
 import org.junit.Test;
-import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
+
 import org.polymap.rap.openlayers.base.OlPropertyConcern.Unquoted;
 import org.polymap.rap.openlayers.view.View;
 
@@ -31,19 +32,17 @@ public class OlObjectTest
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = AssertionError.class)
     public void testSimpleCreateFail1() {
-        OlObject ol = new OlObject( null ) {
-        };
-        ol.create();
+        OlObject ol = new OlObject( null ) { };
+        ol.lazyCreate();
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = AssertionError.class)
     public void testSimpleCreateFail2() {
-        OlObject ol = new OlObject( OlObject.UNKNOWN_CLASSNAME ) {
-        };
-        ol.create();
+        OlObject ol = new OlObject( OlObject.UNKNOWN_CLASSNAME ) { };
+        ol.lazyCreate();
     }
 
 
@@ -60,8 +59,7 @@ public class OlObjectTest
 
     @Test
     public void testSimplecallInt() {
-        OlObject ol = new OlObject( "foo" ) {
-        };
+        OlObject ol = new OlObject( "foo" ) { };
         String ref = generateReference( ol );
         ol.call( "doSomething", 5 );
         assertCall( "this.objs['" + ref + "']=new foo({});" );
@@ -115,12 +113,10 @@ public class OlObjectTest
 
     @Test
     public void testSimplecallOlObject() {
-        OlObject ol = new OlObject( "foo" ) {
-        };
+        OlObject ol = new OlObject( "foo" ) {};
         String ref = generateReference( ol );
 
-        OlObject ol2 = new OlObject( "bar" ) {
-        };
+        OlObject ol2 = new OlObject( "bar" ) {};
         String ref2 = generateReference( ol2 );
 
         ol.call( "add", ol2 );
@@ -152,11 +148,10 @@ public class OlObjectTest
 
     @Test
     public void testSetAttributeEnum() {
-        OlObject ol = new OlObject( "foo" ) {
-        };
+        OlObject ol = new OlObject( "foo" ) { };
         String ref = generateReference( ol );
 
-        ol.setAttribute( "key", View.Event.center );
+        ol.setAttribute( "key", View.Event.CENTER );
         assertCall( "this.objs['" + ref + "']=new foo({});" );
         assertCall( "this.obj=this.objs['" + ref + "']; this.obj.set('key','center');" );
     }
@@ -164,8 +159,7 @@ public class OlObjectTest
 
     @Test
     public void testSetAttributeUnquoted() {
-        OlObject ol = new OlObject( "foo" ) {
-        };
+        OlObject ol = new OlObject( "foo" ) { };
         String ref = generateReference( ol );
 
         Unquoted un = new Unquoted( "<foo>" );
@@ -192,20 +186,19 @@ public class OlObjectTest
 
     @Test
     public void testEventListener() {
-        OlObject ol = new OlObject( "foo" ) {
-        };
+        OlObject ol = new OlObject( "foo" ) {};
         ol.setOsh( osh );
         OlEventListener listener = mock( OlEventListener.class );
-        PayLoad payload = new PayLoad();
-        payload.add( "p1_key", "p1_value" );
+//        PayLoad payload = new PayLoad();
+//        payload.add( "p1_key", "p1_value" );
+//
+//        assertEquals( 1, payload.values().size() );
+//        assertEquals( "p1_key", payload.values().get( 0 ).key() );
+//        assertEquals( "p1_value", payload.values().get( 0 ).value() );
 
-        assertEquals( 1, payload.values().size() );
-        assertEquals( "p1_key", payload.values().get( 0 ).key() );
-        assertEquals( "p1_value", payload.values().get( 0 ).value() );
+        ol.addEventListener( "event", listener );
 
-        ol.addEventListener( "event", listener, payload );
-
-        verify( osh ).registerEventListener( ol, "event", listener, payload );
+        verify( osh ).registerEventListener( ol, "event", listener );
 
         OlEvent event = new OlEvent( ol, "event", null );
         assertEquals( ol, event.getSource() );

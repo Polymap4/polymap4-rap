@@ -31,13 +31,12 @@ public abstract class OlObjectBaseTest {
     protected String generateReference( OlObject ol ) {
         ol.setOsh( osh );
         String ref = "ol" + ol.hashCode();
-        when( osh.generateReference( ol ) ).thenReturn( ref );
+        when( osh.newReference( ol ) ).thenReturn( ref );
         doAnswer( new Answer<Void>() {
 
             @Override
             public Void answer( InvocationOnMock invocation ) throws Throwable {
-                System.out.println(
-                        "call: " + invocation.getArgumentAt( 0, OlCommand.class ).getCommand() );
+                System.out.println( "call: " + invocation.getArgumentAt( 0, OlCommand.class ).getCommand() );
                 return null;
             }
         } ).when( osh ).call( anyObject() );

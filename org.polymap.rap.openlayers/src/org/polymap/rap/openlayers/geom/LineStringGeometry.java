@@ -59,7 +59,7 @@ public class LineStringGeometry
 
 
     @Override
-    protected void create() {
-        super.create( jsClassname, OlPropertyConcern.propertyAsJson( coordinates.get() ).toString() );
+    protected void doCreate() {
+        super.createWithOptions( OlPropertyConcern.propertyAsJson( coordinates.get() ).toString() );
     }
 }

@@ -27,9 +27,9 @@ import org.polymap.rap.openlayers.base.Jsonable;
 public class Size
         implements Jsonable {
 
-    private int width;
+    public int  width;
 
-    private int height;
+    public int  height;
 
 
     public Size( int width, int height ) {

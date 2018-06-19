@@ -14,6 +14,8 @@
  */
 package org.polymap.rap.openlayers.util;
 
+import java.util.function.Function;
+
 /**
  * Simple helper to build HTML/JavaScript code Strings.
  *
@@ -23,71 +25,108 @@ public class Stringer {
 
     public static final int     DEFAULT_CAPACITY = 1024;
     
+    public static final Function<Object,String> DEFAULT_TOSTRING = o -> o.toString();
+    
+    /**
+     * Constructs a new instance with the given separator and default capacity =
+     * {@value #DEFAULT_CAPACITY}
+     */
+    public static Stringer on( String separator ) {
+        return new Stringer().separator( separator );
+    }
+
+    /**
+     * Constructs a new instance with default separator = "" and default capacity =
+     * {@value #DEFAULT_CAPACITY}
+     */
+    public static Stringer defaults() {
+        return new Stringer();
+    }
+    
+    public static String join( Object first, Object... parts ) {
+        return new Stringer().add( first, parts ).toString();
+    }
+    
+    // instance *******************************************
+    
     private StringBuilder       builder = new StringBuilder( DEFAULT_CAPACITY );
     
     private String              sep = "";
     
-    private String              nullReplace = null;
-    
-    
-    public Stringer() {
-    }
+    private String              nullReplacement = null;
 
-    public Stringer( Object first, Object... parts ) {
-        add( first, parts );
-    }
-
+    private Function<Object,String> toString = DEFAULT_TOSTRING;
+    
     @Override
     public String toString() {
         return builder.toString();
     }
 
-    public Stringer replaceNulls( String replace ) {
-        assert replace != null;
-        nullReplace = replace;
+    /**
+     * Specifies the function to use to convert elements to {@link String}.
+     */
+    public Stringer toString( Function<Object,String> _toString ) {
+        this.toString = _toString;
         return this;
     }
     
+    public Stringer replaceNulls( String _nullReplacement ) {
+        assert _nullReplacement != null;
+        nullReplacement = _nullReplacement;
+        return this;
+    }
+    
+    /**
+     * Specifies the separator to be used to separate the elements of
+     * {@link #add(Object, Object...)}. The separator is added <b>between</b> the
+     * elements.
+     */
     public Stringer separator( String _sep ) {
         this.sep = _sep;
         return this;
     }
     
+    /**
+     * Adds the given elements to the string. Uses the last set {@link #separator(String)},
+     * {@link #toString(Function)} and {@link #replaceNulls(String)}.
+     */
     public Stringer add( Object first, Object... parts ) {
-        append( first );
+        append( first, true );
         for (Object part : parts) {
-            append( part );
+            append( part, false );
         }
         return this;
     }
 
     public Stringer add( Object[] parts ) {
+        int c = 0;
         for (Object part : parts) {
-            append( part );
+            append( part, c++ == 0 );
         }
         return this;        
     }
 
     public Stringer add( Iterable parts ) {
+        int c = 0;
         for (Object part : parts) {
-            append( part );
+            append( part, c++ == 0 );
         }
         return this;        
     }
 
-    protected void append( Object part ) {
+    protected void append( Object part, boolean isFirst ) {
         if (part == null) {
-            if (nullReplace == null) {
+            if (nullReplacement == null) {
                 throw new IllegalArgumentException( "String part is null and no null replacement was given." );
             }
             else {
-                part = nullReplace;
+                part = nullReplacement;
             }
         }
-        if (builder.length() > 0 && sep.length() > 0) {
+        if (!isFirst /*builder.length() > 0*/ && sep.length() > 0) {
             builder.append( sep );
         }
-        builder.append( part.toString() );
+        builder.append( toString.apply( part ) );
     }
     
 }

@@ -1,7 +1,6 @@
 /*
- * polymap.org and individual contributors as indicated by the @authors tag.
- * Copyright (C) 2009-2015 
- * All rights reserved.
+ * polymap.org 
+ * Copyright (C) 2009-2018, Polymap GmbH. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -14,24 +13,29 @@
  */
 package org.polymap.rap.openlayers.view;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.rap.openlayers.base.OlEventListener;
+
+import org.polymap.rap.openlayers.base.OlEvent;
+import org.polymap.rap.openlayers.base.OlEventPayload;
 import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.base.OlObject;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
-import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
-import org.polymap.rap.openlayers.base.OlMap.Event;
 import org.polymap.rap.openlayers.types.Coordinate;
 import org.polymap.rap.openlayers.types.Extent;
 import org.polymap.rap.openlayers.types.Projection;
 import org.polymap.rap.openlayers.types.Size;
 
 /**
- * An ol.View object represents a simple 2D view of the map. This is the object to
+ * Represents a simple 2D view of the map. This is the object to
  * act upon to change the center, resolution, and rotation of the map.
  * 
  * @see <a href="http://openlayers.org/en/master/apidoc/ol.View.html">OpenLayers
@@ -42,10 +46,81 @@ import org.polymap.rap.openlayers.types.Size;
 public class View
         extends OlObject {
 
+    /**
+     * Events of {@link View}.
+     */
     public enum Event {
-        center, resolution, rotation
+        /** @see ExtentEventPayload */
+        CENTER( "center" ), 
+        /** @see ExtentEventPayload */
+        RESOLUTION( "resolution" ), 
+        /** @see ExtentEventPayload */
+        ROTATION( "rotation" );
+        
+        private String name;
+
+        private Event( String name ) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
     }
 
+    /**
+     * Payload of {@link View} {@link Event} types or any other event type.
+     * 
+     * @see Event#CENTER
+     * @see Event#RESOLUTION
+     * @see Event#ROTATION
+     */
+    public static class ExtentEventPayload
+            extends OlEventPayload {
+
+        public static Optional<ExtentEventPayload> findIn( OlEvent ev ) {
+            return Optional.ofNullable( ev.properties().optJSONObject( "extent" ) != null 
+                    ? new ExtentEventPayload( ev.properties() ) : null );
+        }
+      
+        // send *******************************************
+
+        protected OlMap         map;
+        
+        public ExtentEventPayload() {
+        }
+
+        @Override
+        public List<Variable> variables() {
+            return Collections.singletonList( new Variable( 
+                    "extent", jsObjRef() + ".calculateExtent(that.objs['" + map.getObjRef() + "'].getSize())" ) );
+        }
+        
+        // receive ****************************************
+        
+        private JSONObject      json;
+        
+        protected ExtentEventPayload( JSONObject json ) {
+            this.json = json;
+        }
+
+        public Extent extent() {
+            JSONArray extent = json.getJSONArray( "extent" );
+            return new Extent( 
+                    extent.getDouble( 0 ), extent.getDouble( 2 ), 
+                    extent.getDouble( 1 ), extent.getDouble( 3 ) );
+        }
+        
+        public double resolution() {
+            // XXX whare this comes from?
+            return json.getDouble( "resolution" );
+        }
+
+    }
+
+
+    // instance *******************************************
+    
     /**
      * The initial center for the view. The coordinate system for the center is
      * specified with the projection option. Default is undefined, and layer sources
@@ -158,33 +233,34 @@ public class View
 
 
     /**
-     * The event contains all properties, also the new center, resolution and
-     * rotation
-     * 
-     * @param event
-     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+     * @param event One of the {@link Event} types.
+     * @param payload {@link ExtentEventPayload} according to the event type or any
+     *        other appropriate payload.
      */
-    public void addEventListener( Event event, OlEventListener listener ) {
-        PayLoad payload = new PayLoad();
-        payload.add( "extent", "that.objs['" + getObjRef()
-                + "'].calculateExtent(that.objs['" + map.getObjRef() + "'].getSize())" );
-        addEventListener( "change:" + event.name(), listener, payload );
+    @Override
+    public void addEventListener( Object event, Object annotated, OlEventPayload... payload ) {
+        for (OlEventPayload entry : payload) {
+            if (entry instanceof ExtentEventPayload) {
+                ((ExtentEventPayload)entry).map = map;
+            }
+        }
+        super.addEventListener( "change:" + ((Event)event).toString(), annotated, payload );
+    }
+
+    @Override
+    public void removeEventListener( Object event, Object annotated ) {
+        super.removeEventListener( "change:" + ((Event)event).toString(), annotated );
     }
 
 
-    public void removeEventListener( Event event, OlEventListener listener ) {
-        removeEventListener( "change:" + event.name(), listener );
-    }
-
-
-    /**
-     * 
-     * @param event
-     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
-     */
-    public void addPropertyChangeListener( OlEventListener listener ) {
-        addEventListener( "propertychange", listener, null );
-    }
+//    /**
+//     * 
+//     * @param event
+//     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+//     */
+//    public void addPropertyChangeListener( OlEventListener listener ) {
+//        addEventListener( "propertychange", listener, null );
+//    }
 
 
     /**

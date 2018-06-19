@@ -16,10 +16,15 @@ package org.polymap.rap.openlayers.base;
 import java.util.Collection;
 
 import org.json.JSONArray;
+
+import org.polymap.core.runtime.Lazy;
+import org.polymap.core.runtime.LockedLazyInit;
+import org.polymap.core.runtime.PlainLazyInit;
 import org.polymap.core.runtime.config.Config;
 import org.polymap.core.runtime.config.ConfigurationFactory;
 import org.polymap.core.runtime.event.EventManager;
-import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
+import org.polymap.core.runtime.event.TypeEventFilter;
+
 import org.polymap.rap.openlayers.base.OlPropertyConcern.Unquoted;
 import org.polymap.rap.openlayers.types.Coordinate;
 import org.polymap.rap.openlayers.util.Stringer;
@@ -36,11 +41,11 @@ public abstract class OlObject {
 
     public static final String UNKNOWN_CLASSNAME = "_unknown_";
 
-    protected String           jsClassname       = UNKNOWN_CLASSNAME;
+    protected String           jsClassname = UNKNOWN_CLASSNAME;
 
     protected String           objRef;
 
-    private OlSessionHandler   osh;
+    protected Lazy<OlSessionHandler> osh = new LockedLazyInit( () -> OlSessionHandler.instance() );
 
 
     protected OlObject( String jsClassname ) {
@@ -52,55 +57,64 @@ public abstract class OlObject {
 
 
     /**
-     * Create the JS instance on the client side using the values of all
-     * {@link Config} members.
+     * Should only be used for testing.
      */
-    protected void create() {
-        if (jsClassname == null || jsClassname.equals( UNKNOWN_CLASSNAME )) {
-            throw new IllegalArgumentException( "jsClassname must be set, but is " + jsClassname );
-        }
+    void setOsh( OlSessionHandler osh ) {
+        this.osh = new PlainLazyInit( () -> osh );
+    }
 
+    
+    /**
+     * This method is called in order to check {@link #isCreated()} and then
+     * eventually call {@link #doCreate()}.
+     */
+    protected final void lazyCreate() {
+        //assert Display.getCurrent() != null : "Not Thread safe, call from Display Thread!";        
+        assert jsClassname != null && !jsClassname.equals( UNKNOWN_CLASSNAME ) : "jsClassname must be set, but is " + jsClassname;
+        if (!isCreated()) {
+            doCreate();
+        }        
+    }
+
+    
+    /**
+     * This method is called in order to actually create the object instance on the
+     * client side. The default implementation uses the values of all {@link Config}
+     * members for building an options object. Sub-classes may override to implement
+     * other behaviour.
+     */
+    protected void doCreate() {
         String options = OlPropertyConcern.propertiesAsJson( this );
-        create( jsClassname, options );
-    }
-
-
-    protected void create( @SuppressWarnings("hiding") String jsClassname, String options ) {
-        create( new Stringer( "new ", jsClassname, "(", options, ")" ).toString() );
-    }
-
-
-    private OlSessionHandler osh() {
-        if (osh == null) {
-            osh = OlSessionHandler.getInstance();
-        }
-        return osh;
+        createWithCode( Stringer.join( "new ", jsClassname, "(", options, ")" ) );
     }
 
 
     /**
-     * Should only be used for testing.
+     * Builds JS code like:
+     * <pre>
+     * new {@link #jsClassname}({@link #argToString(Object)}(options[0]),...)
+     * </pre>
      */
-    void setOsh( OlSessionHandler osh ) {
-        this.osh = osh;
+    protected void createWithOptions( Object... options ) {
+        createWithCode( Stringer.defaults().add( "new ", jsClassname, "(" )
+                .toString( o -> argToString( o ) ).separator( "," ).add( options )
+                .toString( Stringer.DEFAULT_TOSTRING ).add( ")" ).toString() );
     }
 
 
-    protected void create( String code ) {
-        objRef = osh().generateReference( this );
-        osh().call( new OlCommand( getJSObjRef() + "=" + code + ";" ) );
+    protected void createWithCode( String code ) {
+        objRef = osh.get().newReference( this );
+        osh.get().call( new OlCommand( getJSObjRef() + "=" + code + ";" ) );
     }
 
 
-    private void lazyCreate() {
-        if (objRef == null) {
-            create();
-        }
+    protected boolean isCreated() {
+        return objRef != null;
     }
 
 
     public void call( String code ) {
-        osh().call( new OlCommand( new Stringer( "this.obj=", getJSObjRef(), "; ", code ).toString() ) );
+        osh.get().call( new OlCommand( Stringer.join( "this.obj=", getJSObjRef(), "; ", code ) ) );
     }
 
 
@@ -110,16 +124,9 @@ public abstract class OlObject {
      * @param function The name of the function.
      */
     public void call( String function, Object... args ) {
-        StringBuilder buf = new StringBuilder( 128 ).append( "this.obj." ).append( function ).append( '(' );
-
-        for (int i = 0; i < args.length; i++) {
-            if (i > 0) {
-                buf.append( ',' );
-            }
-            Object arg = args[i];
-            buf.append( argToString( arg ) );
-        }
-        call( buf.append( ");" ).toString() );
+        call( Stringer.defaults().add( "this.obj.", function, '(' )
+                .toString( arg -> argToString( arg ) ).separator( "," ).add( args )
+                .toString( Stringer.DEFAULT_TOSTRING ).add( ");" ).toString() );
     }
 
 
@@ -133,7 +140,7 @@ public abstract class OlObject {
     }
 
 
-    private String argToString( Object arg ) {
+    protected String argToString( Object arg ) {
         if (arg instanceof OlObject) {
             return ((OlObject)arg).getJSObjRef();
         }
@@ -175,19 +182,14 @@ public abstract class OlObject {
     }
 
 
-    boolean isCreated() {
-        return objRef != null;
-    }
-
-
     public String getJSObjRef() {
         lazyCreate();
-        return new Stringer().replaceNulls( "null" ).add( "this.objs['", objRef, "']" ).toString();
+        return Stringer.on( "" ).replaceNulls( "null" ).add( "this.objs['", objRef, "']" ).toString();
     }
 
 
     public void dispose() {
-        osh().remove( getObjRef() );
+        osh.get().remove( getObjRef() );
         call( "delete " + getJSObjRef() + ";" );
     }
 
@@ -196,23 +198,45 @@ public abstract class OlObject {
         dispose();
     }
 
+    
+    /**
+     * Registers a new event listener for this object.
+     *
+     * @param event A {@link String} or {@link Enum} that describes the
+     *        {@link OlEvent#name()} of the event. Appropriate Enum types are defined
+     *        by sub-classes.
+     * @param annotated The {@link EventHandler annotated} event listener,
+     *        <em>weakly</em> referenced by {@link EventManager}.
+     * @param payload
+     */
+    protected void addEventListener( Object event, Object annotated, OlEventPayload... payload ) {
+        String eventName = event instanceof String
+                ? (String)event
+                : ((Enum)event).toString();
+        
+        EventManager.instance().subscribe( annotated, TypeEventFilter.ifType( OlEvent.class, ev ->
+                ev.name().equals( eventName ) && 
+                ev.getSource().equals( OlObject.this ) ) );
+        
+        osh.get().registerEventListener( this, eventName, annotated, payload );
+    }
+
     /**
      * 
      *
-     * @param event The {@link OlEvent#name()} of the event.
-     * @param listener <em>Weakly</em> referenced by {@link EventManager}.
-     * @param payload
+     * @param event A {@link String} or {@link Enum} that describes the
+     *        {@link OlEvent#name()} of the event. Appropriate Enum types are defined
+     *        by sub-classes.
+     * @param annotated The {@link EventHandler annotated} event listener,
+     *        <em>weakly</em> referenced by {@link EventManager}.
+     * @param event
      */
-    protected void addEventListener( final String event, OlEventListener listener, PayLoad payload ) {
-        EventManager.instance().subscribe( listener,
-                ev -> ev instanceof OlEvent && ((OlEvent)ev).name().equals( event ) && ((OlEvent)ev).getSource().equals( this ) );
-        osh().registerEventListener( this, event, listener, payload );
-    }
-
-
-    protected void removeEventListener( final String event, OlEventListener listener ) {
-        EventManager.instance().unsubscribe( listener );
-        osh().unregisterEventListener( this, event, listener );
+    protected void removeEventListener( Object event, Object annotated ) {
+        String eventName = event instanceof String
+                ? (String)event
+                : ((Enum)event).toString();
+        EventManager.instance().unsubscribe( annotated );
+        osh.get().unregisterEventListener( this, eventName, annotated );
     }
 
 

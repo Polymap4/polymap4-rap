@@ -1,5 +1,6 @@
 /*
- * polymap.org Copyright (C) 2009-2014, Polymap GmbH. All rights reserved.
+ * polymap.org 
+ * Copyright (C) 2009-2018, Polymap GmbH. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
  * the GNU Lesser General Public License as published by the Free Software
@@ -16,8 +17,8 @@ import java.util.List;
 
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
-import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.rap.openlayers.base.OlEventListener;
+
+import org.polymap.rap.openlayers.base.OlEventPayload;
 import org.polymap.rap.openlayers.base.OlFeature;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.format.FeatureFormat;
@@ -39,24 +40,34 @@ public class VectorSource
         /**
          * (ol.source.VectorEvent) - Triggered when a feature is added to the source.
          */
-        addfeature,
+        ADDFEATURE( "addfeature" ),
         /**
          * Triggered when the state of the source changes.
          */
-        change,
+        CHANGE( "change" ),
         /**
          * Triggered when a feature is updated.
          */
-        changefeature,
+        CHANGEFEATURE( "changefeature" ),
         /**
          * Triggered when the clear method is called on the source.
          */
-        clear,
+        CLEAR( "clear" ),
         /**
          * Triggered when a feature is removed from the source. See source.clear()
          * for exceptions.
          */
-        removefeature;
+        REMOVEFEATURE( "removefeature" );
+        
+        private String name;
+
+        private Event( String name ) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
     }
 
     /*
@@ -94,21 +105,20 @@ public class VectorSource
 
 
     /**
-     * 
-     * @param event
-     * @param listener <b>Weakly</b> referenced by {@link EventManager}.
+     * @param event One of the {@link Event} types.
      */
-    public void addEventListener( Event event, OlEventListener listener ) {
-        // Map<String, String> props = new HashMap<String, String>();
-        // if (event == EVENT.addfeature || event == EVENT.removefeature) {
-        // props.put("feature", "event.feature");
-        // }
-        addEventListener( event.name(), listener, null );
+    @Override
+    public void addEventListener( Object event, Object annotated, OlEventPayload... payload ) {
+        super.addEventListener( event, annotated, payload );
     }
 
 
-    public void removeEventListener( Event event, OlEventListener listener ) {
-        removeEventListener( event.name(), listener );
+    /**
+     * @param event One of the {@link Event} types.
+     */
+    @Override
+    public void removeEventListener( Object event, Object annotated ) {
+        super.removeEventListener( event, annotated );
     }
 
 
@@ -118,25 +128,15 @@ public class VectorSource
 
 
     public void addFeatures( OlFeature... features ) {
-        Stringer command = new Stringer( "this.obj.addFeatures([" );
-        boolean first = true;
-        for (OlFeature feature : features) {
-            if (first) {
-                first = false;
-            }
-            else {
-                command.add( ", " );
-            }
-            command.add( feature.getJSObjRef() );
-        }
-        command.add( "]);" );
-        call( command.toString() );
+        call( Stringer.on( "" ).add( "this.obj.addFeatures([" )
+                .toString( o -> ((OlFeature)o).getJSObjRef() ).separator( "," ).add( features )
+                .toString( o -> (String)o ).add( "]);" )
+                .toString() );
     }
 
 
     public void removeFeature( OlFeature feature ) {
-        Stringer command = new Stringer( "this.obj.removeFeature(", feature.getJSObjRef(), ");" );
-        call( command.toString() );
+        call( Stringer.join( "this.obj.removeFeature(", feature.getJSObjRef(), ");" ) );
     }
 
     public void clear() {
