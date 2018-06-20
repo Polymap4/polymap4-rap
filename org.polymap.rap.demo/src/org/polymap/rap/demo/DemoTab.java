@@ -115,9 +115,9 @@ public abstract class DemoTab {
         // ImageWMSSource().url.put("http://ows.terrestris.de/osm/service/").params
         // .put(new WMSRequestParams().layers.put("OSM-WMS"))).opacity.put(0.5f));
 
-        map.view.get().addPropertyChangeListener(event -> {
-            StatusBar.getInstance().addInfo(parent, name() + ": " + event.properties().toString());
-        });
+//        map.view.get().addPropertyChangeListener(event -> {
+//            StatusBar.getInstance().addInfo(parent, name() + ": " + event.properties().toString());
+//        });
 
         return map;
     }

@@ -15,10 +15,6 @@
 package org.polymap.rap.demo;
 
 import java.util.Arrays;
-import java.util.Collections;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.polymap.rap.openlayers.base.OlMap;
@@ -42,8 +38,6 @@ public class ResolutionsTab
         super( "Resolutions" );
     }
 
-    private final static Log log = LogFactory.getLog( ResolutionsTab.class );
-
 
     @Override
     protected void createDemoControls( Composite parent ) {
@@ -59,10 +53,10 @@ public class ResolutionsTab
 
         map.addControl( new ZoomControl() );
         
-        map.view.get().addPropertyChangeListener( event -> {
-            StatusBar.getInstance().addInfo( parent,
-                    name() + ": " + event.properties().toString() );
-        } );
+//        map.view.get().addPropertyChangeListener( event -> {
+//            StatusBar.getInstance().addInfo( parent,
+//                    name() + ": " + event.properties().toString() );
+//        } );
 
     }
 

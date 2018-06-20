@@ -13,7 +13,9 @@
  */
 package org.polymap.rap.openlayers.base;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONArray;
 
@@ -22,6 +24,7 @@ import org.polymap.core.runtime.LockedLazyInit;
 import org.polymap.core.runtime.PlainLazyInit;
 import org.polymap.core.runtime.config.Config;
 import org.polymap.core.runtime.config.ConfigurationFactory;
+import org.polymap.core.runtime.event.EventHandler;
 import org.polymap.core.runtime.event.EventManager;
 import org.polymap.core.runtime.event.TypeEventFilter;
 
@@ -46,6 +49,9 @@ public abstract class OlObject {
     protected String           objRef;
 
     protected Lazy<OlSessionHandler> osh = new LockedLazyInit( () -> OlSessionHandler.instance() );
+    
+    /** The listeners added via {@link #addEventListener(Object, OlEventPayload, OlEventListener)}. */
+    private List<OlEventListener> strongRefs = new ArrayList( 3 );
 
 
     protected OlObject( String jsClassname ) {
@@ -200,13 +206,13 @@ public abstract class OlObject {
 
     
     /**
-     * Registers a new event listener for this object.
+     * Registers an event listener for this object.
      *
      * @param event A {@link String} or {@link Enum} that describes the
      *        {@link OlEvent#name()} of the event. Appropriate Enum types are defined
      *        by sub-classes.
      * @param annotated The {@link EventHandler annotated} event listener,
-     *        <em>weakly</em> referenced by {@link EventManager}.
+     *        <b>weakly</b> referenced by {@link EventManager}.
      * @param payload
      */
     protected void addEventListener( Object event, Object annotated, OlEventPayload... payload ) {
@@ -219,6 +225,21 @@ public abstract class OlObject {
                 ev.getSource().equals( OlObject.this ) ) );
         
         osh.get().registerEventListener( this, eventName, annotated, payload );
+    }
+
+    
+    /**
+     * Registers an event listener for this object.
+     * <p/>
+     * This method is meant to support in-place event listener implementations and
+     * calls {@link #addEventListener(Object, Object, OlEventPayload...)} to actually
+     * register the listener.
+     * 
+     * @see #addEventListener(Object, Object, OlEventPayload...)
+     */
+    public void addEventListener( Object event, OlEventPayload payload, OlEventListener listener ) {
+        addEventListener( event, listener, payload );
+        strongRefs.add( listener );
     }
 
     /**
@@ -237,6 +258,10 @@ public abstract class OlObject {
                 : ((Enum)event).toString();
         EventManager.instance().unsubscribe( annotated );
         osh.get().unregisterEventListener( this, eventName, annotated );
+        
+        if (annotated instanceof OlEventListener) {
+            strongRefs.remove( annotated );
+        }
     }
 
 

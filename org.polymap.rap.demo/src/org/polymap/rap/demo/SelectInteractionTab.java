@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.polymap.core.runtime.UIThreadExecutor;
-import org.polymap.rap.openlayers.base.OlEventListener.PayLoad;
+import org.polymap.rap.openlayers.base.OlEventPayload;
 import org.polymap.rap.openlayers.base.OlFeature;
 import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.format.GeoJSONFormat;
@@ -127,13 +127,17 @@ public class SelectInteractionTab
 
         map.addLayer( vector );
 
-        PayLoad payload = new PayLoad();
-        payload.add( "feature", "{}" );
-        payload.add( "feature.pixel", "theEvent.pixel" );
-        payload.add( "feature.coordinate",
-                map.getJSObjRef().replace( "this.objs", "that.objs" ) + ".getCoordinateFromPixel(theEvent.pixel)" );
+        OlEventPayload payload = new OlEventPayload() {
+            @Override
+            public List<Variable> variables() {
+                return Lists.newArrayList(         
+                        new Variable( "feature", "{}" ),
+                        new Variable( "feature.pixel", "theEvent.pixel" ),
+                        new Variable( "feature.coordinate", map.getJSObjRef().replace( "this.objs", "that.objs" ) + ".getCoordinateFromPixel(theEvent.pixel)" ) );
+            }
+        };
 
-        map.addEventListener( OlMap.Event.click, event -> {
+        map.addEventListener( OlMap.Event.CLICK, payload, event -> {
             JSONObject json = event.properties();
             JSONObject feature = json.getJSONObject( "feature" );
             JSONArray coordinate = feature.getJSONArray( "coordinate" );

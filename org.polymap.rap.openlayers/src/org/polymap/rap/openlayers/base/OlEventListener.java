@@ -1,5 +1,5 @@
 /*
- * polymap.org 
+ * polymap.org
  * Copyright 2009-2018, Polymap GmbH, and individual contributors as indicated
  * by the @authors tag.
  * 
@@ -22,6 +22,7 @@ import org.polymap.core.runtime.event.EventHandler;
  * An (optional) default interface for all types of event listeners.
  * 
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
+ * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  */
 public interface OlEventListener {
 

@@ -121,7 +121,7 @@ public class OlMap
             return new Coordinate( coord.getDouble( 0 ), coord.getDouble( 1 ) );
         }
         
-        public Pixel pixel( OlEvent ev ) {
+        public Pixel pixel() {
             JSONArray pixel = json.getJSONArray( "pixel" );
             return new Pixel( pixel.getInt( 0 ), pixel.getInt( 1 ) );
         }

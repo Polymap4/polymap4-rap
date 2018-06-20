@@ -14,11 +14,7 @@
  */
 package org.polymap.rap.demo;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.polymap.core.ui.FormDataFactory;
 import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.types.Extent;
 import org.polymap.rap.openlayers.types.Projection;
@@ -28,7 +24,6 @@ import org.polymap.rap.openlayers.view.View;
 /**
  * 
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
- *
  */
 public class ExtentTab
         extends DemoTab {
@@ -36,8 +31,6 @@ public class ExtentTab
     public ExtentTab() {
         super( "Extent" );
     }
-
-    private final static Log log = LogFactory.getLog( ExtentTab.class );
 
 
     @Override
@@ -49,7 +42,7 @@ public class ExtentTab
         Extent envelope = new Extent( 1380000.0, 6690000.0, 1390000.0, 6680000.0 );
 
         map.view.get().projection.set( epsg3857 );
-        map.view.get().addEventListener( View.Event.center,
+        map.view.get().addEventListener( View.Event.CENTER, new View.ExtentEventPayload(),
                 event -> System.out.println( event.properties().toString() ) );
         map.view.get().fit( envelope, null );
     }

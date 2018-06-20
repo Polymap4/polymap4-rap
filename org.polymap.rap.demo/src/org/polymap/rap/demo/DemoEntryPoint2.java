@@ -167,14 +167,14 @@ public class DemoEntryPoint2
         parent.setLayout( new FillLayout() );
 
         Projection epsg3857 = new Projection( "EPSG:3857", Units.m );
-        OlMap map = new OlMap( parent, SWT.MULTI | SWT.WRAP | SWT.BORDER,
+        OlMap map2 = new OlMap( parent, SWT.MULTI | SWT.WRAP | SWT.BORDER,
                 new View().projection.put( epsg3857 ).center
                         .put( new Coordinate( -8161939, 6095025 ) ).zoom.put( 3 ) );
 
         // map.addLayer( new ImageLayer().source.put( new ImageWMSSource().url
         // .put( "http://ows.terrestris.de/osm/service/" ).params
         // .put( new RequestParams().layers.put( "OSM-WMS" ) )).opacity.put( 0.5f ));
-        map.addLayer( new TileLayer().source.put( new MapQuestSource( MapQuestSource.Type.hyb ) ) );
+        map2.addLayer( new TileLayer().source.put( new MapQuestSource( MapQuestSource.Type.hyb ) ) );
         //
         VectorSource source = new VectorSource().format.put( new GeoJSONFormat() ).url.put( RWT
                 .getResourceManager().getLocation( "/polygon-samples.geojson" ) ).attributions
@@ -185,17 +185,17 @@ public class DemoEntryPoint2
                 .put( new StrokeStyle().color.put( new Color( "red" ) ).width.put( 1f ) ) ).source
                 .put( source );
 
-        map.addLayer( vector );
+        map2.addLayer( vector );
 
         // vector.addEventListener(VectorSource.EVENT.addfeature, event ->
         // System.out.println(event.getProperties()));
 
         DrawInteraction di = new DrawInteraction( source, DrawInteraction.Type.LineString );
-        di.addEventListener( DrawInteraction.Event.drawstart,
-                event -> System.out.println( event.properties() ) );
-        di.addEventListener( DrawInteraction.Event.drawend,
-                event -> System.out.println( event.properties() ) );
-        map.addInteraction( di );
+        di.addEventListener( DrawInteraction.Event.DRAWSTART, new DrawInteraction.DrawendEventPayload(),
+                ev -> System.out.println( ev.properties() ) );
+        di.addEventListener( DrawInteraction.Event.DRAWEND, new DrawInteraction.DrawendEventPayload(),
+                ev -> System.out.println( ev.properties() ) );
+        map2.addInteraction( di );
         // WMSLayer layer = new WMSLayer("OSM2",
         // "http://ows.terrestris.de/osm/service/", "OSM-WMS");
         // layer.setIsBaseLayer(true);
@@ -207,46 +207,14 @@ public class DemoEntryPoint2
         // map.addControl(new ButtonControl("foo"));
         // map.addControl(new BoxControl());
 
-        //
-        // HashMap<String, String> payload = new HashMap<String, String>();
-        // map.events.register( this, OlMap.EVENT_MOVEEND, payload );
-        // OlEventListener listener = new OlEventListener() {
-        //
-        // @Override
-        // public void handleEvent( OlEvent event ) {
-        // System.out.println( event.getProperties() );
-        // }
-        // };
-        map.view.get().addEventListener( View.Event.center, event -> {
-            System.out.println( "CENTER: " + event.properties() );
+        map2.view.get().addEventListener( View.Event.CENTER, new View.ExtentEventPayload(), ev -> {
+            System.out.println( "CENTER: " + ev.properties() );
         } );
-        map.view.get().addEventListener( View.Event.resolution, event -> {
-            System.out.println( "RESOLUTION: " + event.properties() );
+        map2.view.get().addEventListener( View.Event.RESOLUTION, new View.ExtentEventPayload(), ev -> {
+            System.out.println( "RESOLUTION: " + ev.properties() );
         } );
-        map.view.get().addPropertyChangeListener( event -> {
-            System.out.println( event.properties() );
-        } );
-        // view2.addEventListener(View.EVENT.resolution, listener);
-        // new OlEventListener() {
-        //
-        // @Override
-        // public void handleEvent(OpenLayersObject src, String name,
-        // JsonObject properties) {
-        // log.info(this + ": " + name);
-        // }
-        //
-        // }, null);
-
-        // map2.addEventListener(OlMap.EVENT_MOVEEND,
-        // new OlEventListener() {
-        //
-        // @Override
-        // public void handleEvent(OpenLayersObject src, String name,
-        // JsonObject properties) {
-        // log.info(this + ": " + name);
-        // }
-        //
-        // }, null);
-
+//        map.view.get().addPropertyChangeListener( event -> {
+//            System.out.println( event.properties() );
+//        } );
     }
 }
