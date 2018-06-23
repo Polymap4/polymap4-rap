@@ -28,7 +28,7 @@ function loadCSS(url) {
  * 
  */
 function log( msg ) {
-    //console.log( msg );
+    console.log( msg );
 }
 
 (function() {
