@@ -79,8 +79,8 @@ public class View
             extends OlEventPayload {
 
         public static Optional<ExtentEventPayload> findIn( OlEvent ev ) {
-            return Optional.ofNullable( ev.properties().optJSONObject( "extent" ) != null 
-                    ? new ExtentEventPayload( ev.properties() ) : null );
+            Object extent = ev.properties().opt( "extent" );
+            return Optional.ofNullable( extent != null ? new ExtentEventPayload( ev.properties() ) : null );
         }
       
         // send *******************************************
