@@ -18,6 +18,7 @@ import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.ConfigurationFactory;
 import org.polymap.core.runtime.config.DefaultString;
 import org.polymap.core.runtime.config.Mandatory;
+
 import org.polymap.rap.openlayers.base.Jsonable;
 import org.polymap.rap.openlayers.base.OlProperty;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
@@ -83,21 +84,21 @@ public class WMSRequestParams
     public Config2<WMSRequestParams,Boolean> transparent;
 
     /**
-     * No Background color for the map image. Value is in the form RRGGBB. Default is
+     * Background color for the map image. Value is in the form RRGGBB. Default is
      * FFFFFF (white).
      */
     @OlProperty("BGCOLOR")
     public Config2<WMSRequestParams,String>  bgcolor;
 
     /**
-     * No Format in which to report exceptions. Default value is
+     * Format in which to report exceptions. Default value is
      * application/vnd.ogc.se_xml.
      */
     @OlProperty("EXCEPTIONS")    
     public Config2<WMSRequestParams,String>  exceptions;
 
     /**
-     * No Time value or range for map data. See <a href=
+     * Time value or range for map data. See <a href=
      * "http://docs.geoserver.org/stable/en/user/services/wms/time.html#wms-time">
      * Time Support</a> in GeoServer WMS for more information.
      */
