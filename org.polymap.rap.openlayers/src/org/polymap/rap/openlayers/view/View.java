@@ -107,8 +107,8 @@ public class View
         public Extent extent() {
             JSONArray extent = json.getJSONArray( "extent" );
             return new Extent( 
-                    extent.getDouble( 0 ), extent.getDouble( 2 ), 
-                    extent.getDouble( 1 ), extent.getDouble( 3 ) );
+                    extent.getDouble( 0 ), extent.getDouble( 1 ), 
+                    extent.getDouble( 2 ), extent.getDouble( 3 ) );
         }
         
         public double resolution() {
