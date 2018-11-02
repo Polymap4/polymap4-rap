@@ -28,7 +28,7 @@ function loadCSS(url) {
  * 
  */
 function log( msg ) {
-    console.log( msg );
+   // console.log( msg );
 }
 
 (function() {
@@ -194,31 +194,31 @@ function log( msg ) {
         },
 
         call : function(properties) {
-            log( 'call(): ' + properties.code );
+            log( 'CALL: ' + properties.code );
             eval( properties.code );
         },
         
-        addListener : function(properties) {
+        addListener : function( properties ) {
             //log( 'addListener(): ' + properties );
             //log( 'obj' + this.objs[properties.src] );
-            var key = this.objs[properties.src].on(properties.event, function( theEvent ) {
+            var key = this.objs[properties.src].on( properties.event, function( theEvent ) {
                 //log( "Event properties: " + this.objs[properties.src].getProperties() );
-                //log( "theEvent: " + theEvent );
+                log( "EVENT: " + theEvent.type );
                 
                 var oldTimeOut = this.events[theEvent + theEvent.type];
                 if (oldTimeOut) {
-                    window.clearTimeout(oldTimeOut);
+                    window.clearTimeout( oldTimeOut );
                 }
                 var that = this;
                 var ev = theEvent;
                 
-                // wait 100ms for sending the event, newer events will remove this call
+                // throttle: wait 200ms for sending the event, newer events will remove this call
                 var newTimeOut = window.setTimeout( function() {
-                    log( "Code: " + properties.code );
+                    log( "CODE: " + properties.code );
                 	eval( properties.code );
-                },100);
+                }, 200 );
                 this.events[theEvent + theEvent.type] = newTimeOut;
-            }, this);
+            }, this );
             //log( 'key: ' + key );
             // listeners stored by key, do later remove them from the global goog context
             this.listenerKeys[properties.hashCode] = key;
