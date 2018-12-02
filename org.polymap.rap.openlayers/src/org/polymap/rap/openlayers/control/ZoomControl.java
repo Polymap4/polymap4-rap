@@ -1,5 +1,6 @@
 /*
- * polymap.org Copyright 2009, Polymap GmbH, and individual contributors as indicated
+ * polymap.org 
+ * Copyright 2009-2018, Polymap GmbH, and individual contributors as indicated
  * by the @authors tag.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -10,22 +11,15 @@
  * This software is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License along
- * with this software; if not, write to the Free Software Foundation, Inc., 51
- * Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF site:
- * http://www.fsf.org.
  */
-
 package org.polymap.rap.openlayers.control;
 
 import org.polymap.core.runtime.config.Concern;
-import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Config2;
+import org.polymap.core.runtime.config.Immutable;
+
 import org.polymap.rap.openlayers.base.OlProperty;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
-import org.polymap.rap.openlayers.style.StrokeStyle;
-import org.polymap.rap.openlayers.style.Style;
 
 /**
  * A control with 2 buttons, one for zoom in and one for zoom out. This control is
@@ -41,10 +35,12 @@ public class ZoomControl
     @Immutable
     @Concern(OlPropertyConcern.class)
     @OlProperty("className")
+    
     /**
      * className string | undefined CSS class name. Default is ol-zoom.
      */
     public Config2<ZoomControl,String> cssClass;
+    
     /*
      * TODO
      * 
@@ -59,7 +55,6 @@ public class ZoomControl
      * label to use for the button tip. Default is Zoom out delta number | undefined
      * The zoom delta applied on each click. target Element | undefined Target.
      */
-
     public ZoomControl() {
         super( "ol.control.Zoom" );
     }

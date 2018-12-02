@@ -20,8 +20,9 @@
 package org.polymap.rap.openlayers.control;
 
 import org.polymap.core.runtime.config.Concern;
-import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Config2;
+import org.polymap.core.runtime.config.Immutable;
+
 import org.polymap.rap.openlayers.base.OlEventListener;
 import org.polymap.rap.openlayers.base.OlMap;
 import org.polymap.rap.openlayers.base.OlProperty;
@@ -73,7 +74,7 @@ public class ScaleLineControl
      * @param listener <b>Weakly</b> referenced by {@link EventManager}.
      */
     public void addEventListener( Event event, OlEventListener listener ) {
-        addEventListener( "change:" + event.name(), listener, null );
+        addEventListener( "change:" + event.name(), listener );
     }
 
 

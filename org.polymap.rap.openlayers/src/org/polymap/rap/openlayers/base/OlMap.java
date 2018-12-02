@@ -44,21 +44,21 @@ import org.polymap.rap.openlayers.types.Pixel;
 import org.polymap.rap.openlayers.view.View;
 
 /**
+ * The map is the core component of OpenLayers. For a map to render, a view, one or
+ * more layers are needed.
+ * <p/>
  * The Javascript and also the CSS for the map is loaded on demand and with a fully
  * working layout. To change the default theme, add another CSS file as resource
- * <strong>ol/css/ol.css<strong>.
+ * <strong>ol/css/ol.css</strong>.
  * <p/>
- * 
  * This could be done in the application configuration like:
- * 
  * <pre>
  * application.addResource( &quot;ol/css/ol.css&quot;, resourceName -&gt; {
  *     return load( &quot;./resources/css/my-ol.css&quot; );
  * } );
  * </pre>
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.Map.html">Open Layers API
- *      Doc</a>
+ * @see <a href="http://openlayers.org/en/v3.20.1/apidoc/ol.Map.html">OpenLayers Doc</a>
  * 
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  * @author <a href="http://mapzone.io">Steffen Stundzig</a>
@@ -206,25 +206,23 @@ public class OlMap
     public OlMap( Composite parent, int style, View view ) {
         super( "ol.Map" );
         this.view.set( view );
-        // this.interactions.set( new ArrayList<Interaction>() );
         view.setMap( this );
 
         widget = new Composite( parent, style );
+        widget.setTouchEnabled( true );
         widget.setLayout( new Layout() {
-
             @Override
             protected void layout( Composite composite, boolean flushCache ) {
-//                log.info( "layout " + composite + ", " + flushCache );
+                log.debug( "layout " + composite + ", " + flushCache );
                 update();
             }
-
             @Override
             protected Point computeSize( Composite composite, int wHint, int hHint, boolean flushCache ) {
-//                log.info( "computeSize " + composite + ", " + wHint + ", " + ", " + hHint + flushCache );
+                log.debug( "computeSize " + composite + ", " + wHint + ", " + ", " + hHint + flushCache );
                 return new Point( 1, 1 );
             }
         } );
-        this.target.set( new Unquoted( "this.createDiv('" + WidgetUtil.getId( widget ) + "')" ) );
+        target.set( new Unquoted( "this.createDiv('" + WidgetUtil.getId( widget ) + "')" ) );
 //        call( "this.obj.on('propertychange', function() {console.log('propertychange on map');})" );
 //        addEventListener( "propertychange", event -> {
 //            log.info( event.properties() );
