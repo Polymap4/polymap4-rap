@@ -15,9 +15,12 @@ package org.polymap.rap.openlayers.layer;
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
+
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 import org.polymap.rap.openlayers.source.VectorSource;
 import org.polymap.rap.openlayers.style.Base;
+import org.polymap.rap.openlayers.style.StyleArray;
+import org.polymap.rap.openlayers.style.StyleFunction;
 
 /**
  * Vector data that is rendered client-side. Note that any property set in the
@@ -25,7 +28,7 @@ import org.polymap.rap.openlayers.style.Base;
  * title: 'My Title' in the options means that title is observable, and has get/set
  * accessors.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.layer.Vector.html">
+ * @see <a href="http://openlayers.org/en/v3.20.1/apidoc/ol.layer.Vector.html">
  *      OpenLayers Doc</a>
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
@@ -37,6 +40,10 @@ public class VectorLayer
      * Layer style. See
      * <a href="http://openlayers.org/en/master/apidoc/ol.style.html">ol.style</a>
      * for default style which will be used if this is not defined.
+     * 
+     * @see Style
+     * @see StyleArray
+     * @see StyleFunction
      */
     @Immutable
     @Concern(OlPropertyConcern.class)

@@ -13,9 +13,10 @@
 package org.polymap.rap.openlayers.types;
 
 import org.polymap.core.runtime.config.Check;
+import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.ConfigurationFactory;
 import org.polymap.core.runtime.config.NumberRangeValidator;
-import org.polymap.core.runtime.config.Config2;
+
 import org.polymap.rap.openlayers.base.Jsonable;
 
 /**
@@ -23,7 +24,7 @@ import org.polymap.rap.openlayers.base.Jsonable;
  * blue should be integers in the range 0..255 inclusive. alpha should be a float in
  * the range 0..1 inclusive.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.html#Color
+ * @see <a href="http://openlayers.org/en/v3.20.1/apidoc/ol.html#Color">OpenLayers Doc</a>
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */

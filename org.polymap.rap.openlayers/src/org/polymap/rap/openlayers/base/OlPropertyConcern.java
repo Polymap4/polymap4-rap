@@ -37,6 +37,8 @@ import org.polymap.core.runtime.config.DefaultPropertyConcern;
  * {@link OlObject}.
  * 
  * @see OlProperty
+ * @see OlSetter
+ * @see OlPropertyAndSetter
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  */
 public class OlPropertyConcern
@@ -44,6 +46,7 @@ public class OlPropertyConcern
 
     private static final Log log = LogFactory.getLog( OlPropertyConcern.class );
 
+    
     @Override
     public synchronized Object doSet( Object obj, Config<Object> prop, Object value ) {
         //log.info( obj.getClass().getSimpleName() + "." + prop.info().getName() + " = " + value );
@@ -108,7 +111,7 @@ public class OlPropertyConcern
 
 
     /**
-     * Creates a JSON representation of the {@link Config} members of an
+     * Creates a JSON representation of all {@link Config} members of an
      * {@link OlObject}.
      */
     public static String propertiesAsJson( Object obj ) {

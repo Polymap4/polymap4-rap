@@ -1,5 +1,6 @@
 /*
- * polymap.org Copyright (C) 2009-2015 Polymap GmbH and individual contributors as
+ * polymap.org 
+ * Copyright (C) 2009-2018 Polymap GmbH and individual contributors as
  * indicated by the @authors tag. All rights reserved.
  * 
  * This is free software; you can redistribute it and/or modify it under the terms of
@@ -14,15 +15,16 @@
 package org.polymap.rap.openlayers.style;
 
 import org.polymap.core.runtime.config.Concern;
+import org.polymap.core.runtime.config.Config2;
 import org.polymap.core.runtime.config.Immutable;
 import org.polymap.core.runtime.config.Mandatory;
-import org.polymap.core.runtime.config.Config2;
+
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 
 /**
  * Set circle style for vector features.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.style.Circle.html">
+ * @see <a href="http://openlayers.org/en/v3.20.1/apidoc/ol.style.Circle.html">
  *      OpenLayers Doc</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */

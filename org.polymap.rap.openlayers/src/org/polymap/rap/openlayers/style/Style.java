@@ -15,6 +15,7 @@ package org.polymap.rap.openlayers.style;
 
 import org.polymap.core.runtime.config.Concern;
 import org.polymap.core.runtime.config.Config2;
+
 import org.polymap.rap.openlayers.base.OlObject;
 import org.polymap.rap.openlayers.base.OlPropertyConcern;
 
@@ -23,13 +24,14 @@ import org.polymap.rap.openlayers.base.OlPropertyConcern;
  * its children will not take effect until the feature, layer or FeatureOverlay that
  * uses the style is re-rendered.
  * 
- * @see <a href="http://openlayers.org/en/master/apidoc/ol.style.Style.html">
+ * @see <a href="http://openlayers.org/en/v3.20.1/apidoc/ol.style.Style.html">
  *      OpenLayers Doc</a>
  * @author <a href="http://www.polymap.de">Falko Bräutigam</a>
  * @author <a href="http://stundzig.it">Steffen Stundzig</a>
  */
 public class Style
-        extends OlObject implements Base {
+        extends OlObject 
+        implements Base {
 
     @Concern(OlPropertyConcern.class)
     public Config2<Style,StrokeStyle> stroke;
